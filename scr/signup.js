@@ -21,8 +21,8 @@ const user_phone_no_input = document.getElementById('phone-no');
 const user_username_input = document.getElementById('username');
 const user_pass_input = document.getElementById('user-pass');
 
-const signup_btn = document.getElementById('signup-btn');
-const login_btn = document.getElementById('login-btn');
+const signup_btn = document.getElementById('signup-btn-(sign)');
+const login_btn = document.getElementById('login-btn-(sign)');
 
 
 
@@ -153,13 +153,22 @@ function check_user_fillup_or_not(){
     }
 }
 
+async function login_page(){
+    try {
+        window.location.href = "/login"
+        console.log("sending req to get login page")
+    } catch (err) {
+        console.log(err)
+    }
+}
+
 signup_btn.addEventListener("click", check_user_fillup_or_not);
+login_btn.addEventListener("click", login_page);
 
 debounce(validate_email, user_email_input, 2000);
 debounce(validate_pass, user_pass_input, 2000);
-
 debounce(send_email, user_email_input, 3000)
-user_username_input.addEventListener("click", send_phone_no);
-
 debounce(send_username, user_username_input, 500);
+
+user_username_input.addEventListener("click", send_phone_no);
 

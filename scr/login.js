@@ -1,0 +1,70 @@
+import axios from "axios";
+import isEmail from "validator/lib/isEmail";
+
+const email_or_username_input = document.getElementById("email_or_username_input");
+const email_or_usernamefeedback = document.getElementById("email_or_usernamefeedback");
+const password_input = document.getElementById("password_input");
+const Password_feedback = document.getElementById("Password_feedback");
+const login_btn_loginpage = document.getElementById("login-btn-(login)");
+const signup_btn_loginpage = document.getElementById("signup-btn-(login)");
+
+console.log("404")
+
+async function login_user(){
+
+    let email_or_username = email_or_username_input.value;
+    let password = password_input.value;
+
+    console.log(`login user fnc is started ${email_or_username}`)
+
+    if(isEmail(email_or_username)){
+
+        try {
+
+            let response = await axios.post("http://localhost:3000/api/login",{
+                email: email_or_username,
+                password: password
+            });
+
+           let auth = response.data.auth;
+            
+           if (auth === "correct_pass") {
+             window.location.href = '/'
+           } else {
+            Password_feedback.textContent = "Incorrect password"
+           }
+
+        } catch (error) {
+            console.log(error);
+        }
+
+    } else {
+
+        try {
+
+            let response = await axios.post("http://localhost:3000/api/login",{
+                username: email_or_username,
+                password: password
+            });
+
+            let auth = response.data.auth;
+            
+            if (auth === "correct_pass") {
+              window.location.href = '/'
+            } else {
+              Password_feedback.textContent = "Incorrect password"
+            }
+
+        } catch (error) {
+            console.log(error);
+        }
+    }
+}
+
+function redirect_signup(){
+    window.location.href = "/signup"
+}
+
+login_btn_loginpage.addEventListener("click", login_user);
+signup_btn_loginpage.addEventListener("click", redirect_signup);
+

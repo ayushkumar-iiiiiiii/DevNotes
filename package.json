@@ -13,10 +13,10 @@
   },
   "scripts": {
     "start": "nodemon server.js",
-    "build": "webpack"
+    "dev": "vite",
+    "build": "vite build"
   },
   "devDependencies": {
-    "webpack": "^5.106.2",
-    "webpack-cli": "^7.0.2"
+    "vite": "^8.0.11"
   }
 }

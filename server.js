@@ -2,7 +2,7 @@ const express = require("express");
 const path = require("path");
 const bcrypt = require("bcrypt");
 const pool = require("./dbconfig");
-const { availableMemory } = require("process");
+const { availableMemory, nextTick } = require("process");
 const cookieParser = require("cookie-parser");
 require('dotenv').config();
 
@@ -25,26 +25,93 @@ const create_token = (username)=>{
     return token;
 }
 
-app.use(express.static('Static'));
+const protect_route = async (req, res, next) => {
+    try{
+        let token = req.cookies.token;
+
+        if(!token){
+
+            res.redirect("/signup")
+            
+            return res.json({
+                massage: "token not found"
+            })
+        }
+
+        const decode = jwt.verify(token, process.env.JWT_SECRET);
+
+        req.user = decode;
+    }
+    catch(err){
+        console.log(err)
+    }
+}
+
 app.use(express.json());
 app.use(cookieParser());
-
 
 let phone_no_T_F = false;
 
 
 
-app.get('/', (req, res)=>{
-    let auth = false;
-    if(auth){
-        res.sendFile(path.join(__dirname, "./Public", "index.html"))
+app.get('/', protect_route, (req, res)=>{
+
+    if(req.user !== null){
+        res.sendFile(path.join(__dirname, "Static", "index.html"))
     }
     else{
         res.redirect("/signup")
     }
 })
 app.get('/signup', (req,res)=>{
-    res.sendFile(path.join(__dirname,'./Public', 'signup.html'))
+    res.sendFile(path.join(__dirname,'Static', 'signup.html'))
+    res.sendFile(path.join(__dirname,"Static", "assets", "signup-mwbczkIQ.js"))
+})
+
+app.get('/login', (req,res)=>{
+    console.log("sending file to front end for login page")
+    res.sendFile(path.join(__dirname, "Static", "login.html"))
+})
+
+app.post("/api/login" , async (req,res)=>{
+    let email = req.body.email;
+    let username = req.body.username;
+    let password = req.body.password;
+   try {
+    if (email !== null) {
+        console.log("runing query")
+        let result = await pool.query("SELECT * FROM users WHERE email = $1 LIMIT 1",
+        [email])
+
+        let password_hash = result.rows[0].password_hash;
+
+        let match = await bcrypt.compare(password, password_hash);
+
+        if(match){
+            const token = create_token(result.rows[0].username)
+
+        res.cookie("token",token,{
+        httpOnly: false,
+        secure: false,
+        sameSite: "strict",
+        maxAge: 604800000
+        })
+
+        res.json({
+                auth: "correct_pass"
+            })
+
+        }
+        
+        else{
+            res.json({
+                auth: "wrong_pass"
+            })
+        }
+    }
+   } catch (error) {
+    
+   }
 })
 
 app.post("/api/check_email", async (req, res)=>{
@@ -158,10 +225,10 @@ app.post("/api/check_phone_no", async (req, res)=>{
     }
 })
 
+app.use(express.static("Static"))
+
 app.listen('3000', "0.0.0.0", ()=>{
     console.log("server working on port 3000");
 })
   
-async function auth() {
-    
-}
+
