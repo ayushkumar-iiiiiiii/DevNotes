@@ -1,5 +1,6 @@
 import axios from "axios";
 import isEmail from "validator/lib/isEmail";
+import "./login.css"
 
 const email_or_username_input = document.getElementById("email_or_username_input");
 const email_or_usernamefeedback = document.getElementById("email_or_usernamefeedback");
@@ -8,7 +9,6 @@ const Password_feedback = document.getElementById("Password_feedback");
 const login_btn_loginpage = document.getElementById("login-btn-(login)");
 const signup_btn_loginpage = document.getElementById("signup-btn-(login)");
 
-console.log("404")
 
 async function login_user(){
 
