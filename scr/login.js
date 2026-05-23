@@ -21,7 +21,7 @@ async function login_user(){
 
         try {
 
-            let response = await axios.post("http://localhost:3000/api/login",{
+            let response = await axios.post("http://10.47.43.103:3000/api/login",{
                 email: email_or_username,
                 password: password
             });
@@ -42,7 +42,7 @@ async function login_user(){
 
         try {
 
-            let response = await axios.post("http://localhost:3000/api/login",{
+            let response = await axios.post("http://10.47.43.103:3000/api/login",{
                 username: email_or_username,
                 password: password
             });
