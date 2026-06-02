@@ -1,21 +1,45 @@
+:root {
+    --bg: #0f1115;
+    --surface: #181c23;
+    --surface2: #222834;
+
+    --border: #2d3645;
+
+    --text: #f3f4f6;
+    --muted: #9ca3af;
+
+    --accent: #3b82f6;
+    --accent-hover: #2563eb;
+
+    --tag-bg: rgba(59, 130, 246, 0.15);
+
+    --editor-bg: #f8fafc;
+    --editor-text: #111827;
+
+    --danger: #ef4444;
+}
+
+
 body {
     margin: 0;
     height: 100vh;
     display: grid;
-    gap: 5px;
+    /* gap: 5px; */
     grid-template-columns: 1.5fr 9fr;
     grid-template-rows: 0.9fr 14fr;
     grid-template-areas:
         "side_nav_bar top_nav_bar"
         "side_nav_bar main_contant";
     overflow: hidden;
+    background-color: #0f0f0f;
 }
 
 #top_nav_bar {
-    background-color: aqua;
+    background-color: #1a1a1a;
     display: flex;
     gap: 5px;
     padding: 10px;
+    border-bottom: 1px solid rgb(155, 155, 155);
 }
 
 #search {
@@ -24,12 +48,13 @@ body {
 }
 
 #side_nav_bar {
-    background-color: blue;
+    background-color: #1a1a1a;
     overflow-y: auto;
     display: flex;
     flex-direction: column;
     gap: 10px;
     height: 100vh;
+    border-right: 1px solid rgb(194, 194, 194);
 }
 
 #side_nav_bar_content {
@@ -51,7 +76,7 @@ body {
 
 
 #main_contant {
-    background-color: brown;
+    background-color: #0f0f0f;
     overflow-y: auto;
 }
 
@@ -66,7 +91,9 @@ body {
     display: flex;
     flex-direction: column;
     height: 250px;
-    background-color: bisque;
+    background-color: #3b82f6;
+    border: 2px solid rgb(173, 173, 173);
+    border-radius: 20px;
 }
 
 .notes_content {
@@ -95,7 +122,7 @@ body {
 .notes_tags {
     padding: 6px;
     border-radius: 15px;
-    background-color: yellowgreen;
+    background-color: rgba(69, 236, 195, 0.644);
 }
 
 #note_editor {
@@ -106,14 +133,14 @@ body {
     align-items: center; */
     margin: 0;
     border-radius: 30px;
-    border: 2px solid gray;
+    border: 2px solid rgb(238, 228, 228);
 }
 
 .note_editor_main_containt {
     resize: none;
     outline: none;
     border: none;
-    background-color: bisque;
+    background-color: #eaeaea;
 }
 
 
@@ -124,9 +151,9 @@ body {
     padding-right: 15px;
     padding-top: 10px;
     padding-bottom: 10px;
-    border-bottom: 2px solid red;
+    border-bottom: 2px solid rgba(255, 255, 255, 0.849);
     gap: 12px;
-    background-color: rgb(203, 253, 255);
+    background-color: #1a1a1a;
 }
 
 #seacrh_in_notes{

@@ -97,7 +97,7 @@ async function send_phone_no(){
 async function send_username() {
     console.log('sending username to backend for check')
     try {
-        let response = await axios.post('http://10.47.43.103:3000/api/check_username', {
+        let response = await axios.post('http://localhost:3000/api/check_username', {
             username: user_username_input.value
         }) 
          if (response.data.exists === "exist") {
@@ -118,7 +118,7 @@ async function sendcred() {
     validate_pass();
                                              
     try {
-        const response = await axios.post('http://10.47.43.103:3000/api/userdata', {
+        const response = await axios.post('http://localhost:3000/api/userdata', {
             user_email: valid_user_email,
             user_phone_no: user_phone_no_input.value,
             user_username: user_username_input.value,
@@ -149,6 +149,7 @@ function check_user_fillup_or_not(){
         sendcred_bulean = false;
     }
     if(sendcred_bulean){
+        console.log("sending data to backend for inserting in db")
         sendcred();
     }
 }

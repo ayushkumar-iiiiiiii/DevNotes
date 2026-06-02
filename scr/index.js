@@ -142,16 +142,16 @@ const notes = [
     },
     {
         title: "Creating reusable button components supporting multiple visual style variations",
-        content: "Designed configurable button elements supporting icons colors and loading states. Consistency across the entire frontend application improved noticeably afterward.",
+        content: "Designed configurable button elements supporting icons colors and loading states lorem10. Consistency across the entire frontend application improved noticeably afterward.",
         tags: ["buttons", "ui"],
         date: "2026-02-07",
         timestamp: 1770412292
     }]
 
-
 const main_contant = document.getElementById("main_contant")
 const note_editor = document.getElementById("note_editor")
 const close_editor = document.getElementById("close_editor")
+
 
 // way to create notes
 
@@ -200,7 +200,9 @@ notes.forEach((element) => {
 
 
 
-all_notes.appendChild(all_notes_fragment)
+all_notes.appendChild(all_notes_fragment);
+
+
 
 
 close_editor.addEventListener("click", () => {
