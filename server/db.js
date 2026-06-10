@@ -96,11 +96,13 @@ async function inserting_cred_indb(
 
     try {
 
-        await pool.query("INSERT INTO users(email , username , phone_number , hash_password) VALUES($1,$2,$3,$4)",
+        const result = await pool.query("INSERT INTO users(email , username , phone_number , hash_password) VALUES($1,$2,$3,$4)",
             [user_email, user_username, user_phone_no, user_pass_hash]
         )
 
-        return true;
+        return {
+            inserting_cred_indb_status: true
+        };
         
     } catch (error) {
 
@@ -114,16 +116,78 @@ async function inserting_cred_indb(
 
         }
 
-        return false;
+        return {
+           inserting_cred_indb_status: false 
+        };
 
     }
 
 }
 
 
+
+
+// function for storing the refresh token in Data base
+
+async function insert_refresh_token_hash_indb(user_id, refresh_token_hash, device_info, created_time, expire_time){
+
+    try {
+        
+        console.log(`starting the function for inserting the refresh token in db ${user_id} ${refresh_token_hash} ${device_info} ${created_time} ${expire_time}`)
+
+        const result = await pool.query("INSERT INTO refresh_tokens(user_id , token_hash , device_info , created_at , expires_at) VALUES($1,$2,$3,$4,$5)",
+            [user_id, refresh_token_hash, device_info, created_time, expire_time]
+        )
+
+        return {
+            insert_refresh_token_hash_indb_status : true
+        }
+
+    } catch (error) {
+        
+        console.log(error)
+
+        return {
+            insert_refresh_token_hash_indb_status : false
+        }
+
+    }
+
+}
+
+
+
+
+
+// function for getting user uuid by query the database by username
+
+async function get_user_uuid(username) {
+    try {
+
+        console.log(username)
+
+        const result = await pool.query("SELECT user_id FROM users WHERE username = $1 LIMIT 1",
+            [username]
+        )
+
+        // make a if statment for preventing when user not found and rows are null
+
+        let user_id = result.rows[0].user_id;
+        
+        return user_id;
+        
+    } catch (error) {
+        console.log(error)
+    }
+}
+
+
+
 module.exports = {
     check_email_indb,
     check_phone_number_indb,
     check_username_indb,
-    inserting_cred_indb
+    inserting_cred_indb,
+    insert_refresh_token_hash_indb,
+    get_user_uuid
 }

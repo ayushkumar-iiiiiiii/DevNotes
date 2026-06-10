@@ -64,7 +64,7 @@ async function send_email() {
     console.log('sendemail working')
     validate_email();
     try {
-        const response = await axios.post('http://10.47.43.103:3000/api/check_email', {
+        const response = await axios.post('http://localhost:3000/api/signup/check_email', {
             user_email: valid_user_email
         });
         if (response.data.exists === "exist") {
@@ -80,7 +80,7 @@ async function send_email() {
 async function send_phone_no(){
     console.log('sending phone no to backend for check')
     try {
-        let response = await axios.post("http://10.47.43.103:3000/api/check_phone_no", {
+        let response = await axios.post("http://localhost:3000/api/signup/check_phone_no", {
             phone_no: user_phone_no_input.value
         })
         if (response.data.phone_no === "not_available") {
@@ -97,9 +97,11 @@ async function send_phone_no(){
 async function send_username() {
     console.log('sending username to backend for check')
     try {
-        let response = await axios.post('http://localhost:3000/api/check_username', {
+        let response = await axios.post('http://localhost:3000/api/signup/check_username', {
             username: user_username_input.value
         }) 
+
+        console.log(user_username_input.value)
          if (response.data.exists === "exist") {
             document.getElementById('username_feedback').textContent = "username is already is being used, try a diffrent one"
         } else {
@@ -118,7 +120,7 @@ async function sendcred() {
     validate_pass();
                                              
     try {
-        const response = await axios.post('http://localhost:3000/api/userdata', {
+        const response = await axios.post('http://localhost:3000/api/signup/signup', {
             user_email: valid_user_email,
             user_phone_no: user_phone_no_input.value,
             user_username: user_username_input.value,

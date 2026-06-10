@@ -13,18 +13,18 @@ const check_email_availability_controller = async (req, res) => {
 
     let email = req.body.user_email;
 
-    let email_availability = auth_functions.check_email_availability(email)
+    let email_availability = await auth_functions.check_email_availability(email)
 
     if (email_availability) {
 
         res.json({
-            exists: "exist"
+            exists: "available"
         })
 
     } else {
 
         res.json({
-            exists: "available"
+            exists: "exist"
         })
 
     }
@@ -42,7 +42,7 @@ const check_phone_number_availability_controller = async (req, res) => {
 
     let phone_number = req.body.phone_no;
 
-    let phone_no_availibility = auth_functions.phone_no_availibility(phone_number);
+    let phone_no_availibility = await auth_functions.check_phone_number_availability(phone_number);
 
     if (phone_no_availibility) {
 
@@ -70,18 +70,18 @@ const check_username_availability_controller = async (req, res) => {
 
     let username = req.body.username;
 
-    let username_availability = auth_functions.check_username_availability(username);
+    let username_availability = await auth_functions.check_username_availability(username);
 
     if (username_availability) {
 
         res.json({
-            exists: "exist"
+            exists: "available"
         })
 
     } else {
 
         res.json({
-            exists: "available"
+            exists: "exist"
         })
 
     }
@@ -101,28 +101,52 @@ const user_signup_ftn = async (req, res) => {
     let user_username = req.body.user_username;
     let user_pass_unhash = req.body.user_pass;
 
-    let signup_status = auth_functions.making_user_signup(
-        
+    let signup_status = await auth_functions.making_user_signup(
+
         user_email,
         user_phone_no,
         user_username,
         user_pass_unhash,
 
     )
+    
+    //console.log(signup_status)
 
-    if (signup_status){
-        res.json({
-            signup_status: "ture"
+    if (signup_status.making_user_signup_status) {
+
+        let refresh_token = signup_status.refresh_token;
+        let access_token = signup_status.access_token;
+
+        res.cookie('refresh_token', refresh_token, {
+            httpOnly: true,
+            secure: true,
+            samesite: "strict",
+            maxAge: 1000 * 60 * 60 * 25
+        });
+
+        res.cookie('access_token', access_token, {
+            httpOnly: true,
+            secure: true,
+            samesite: "strict",
+            maxAge: 1000 * 60 * 20
         })
-    } else{
+
+        res.json({
+            signup_status: "true"
+        })
+
+
+    } else {
         res.json({
             signup_status: "false"
         })
     }
 
-    
+
 
 }
+
+
 
 
 
