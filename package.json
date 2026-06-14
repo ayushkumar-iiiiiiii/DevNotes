@@ -10,6 +10,7 @@
     "nodemon": "^3.1.14",
     "path": "^0.12.7",
     "pg": "^8.20.0",
+    "ua-parser-js": "^2.0.10",
     "validator": "^13.15.35"
   },
   "scripts": {
@@ -17,7 +18,7 @@
     "build": "vite build"
   },
   "devDependencies": {
-    "concurrently": "^9.2.1",
+    "concurrently": "^10.0.3",
     "vite": "^8.0.11"
   }
 }

@@ -4,6 +4,9 @@ const db_functions = require('./db');
 const bcrypt = require("bcrypt");
 const crypto = require("crypto");
 const { create } = require("domain");
+const isEmail = require("validator/lib/isEmail");
+
+
 
 
 
@@ -12,14 +15,15 @@ const { create } = require("domain");
 
 // creating access token 
 
-const access_create_token = (username) => {
+const access_create_token = (username, email) => {
     const token = jwt.sign(
         {
             username: username,
+            email: email
         },
         process.env.ACCESS_JWT_SECRET,
         {
-            expiresIn: "15m"
+            expiresIn: "10m"
         }
     )
     return token;
@@ -34,7 +38,7 @@ const refresh_create_token = (username) => {
         },
         process.env.REFRESH_JWT_SECRET,
         {
-            expiresIn: "1d"
+            expiresIn: "3d"
         }
     )
     return token;
@@ -90,7 +94,8 @@ async function making_user_signup(
     user_email,
     user_phone_no,
     user_username,
-    user_pass_unhash
+    user_pass_unhash,
+    device_info
 
 ) {
 
@@ -115,15 +120,15 @@ async function making_user_signup(
 
         )
 
-        const refresh_token_storing_service_status = await refresh_token_storing_service(user_username)
+        const refresh_token_storing_service_status = await refresh_token_storing_service(user_username, user_email, device_info)
 
-        console.log(refresh_token_storing_service_status)
+        // console.log(refresh_token_storing_service_status)
 
         let access_token = refresh_token_storing_service_status.access_token;
         let refresh_token = refresh_token_storing_service_status.refresh_token;
 
-        console.log(`refresh token ${refresh_token}
-        access token ${access_token}`)
+        // console.log(`refresh token ${refresh_token}
+        // access token ${access_token}`)
 
         return {
             access_token: access_token,
@@ -133,7 +138,7 @@ async function making_user_signup(
 
     } else {
 
-        console.log(`there is some error in check email function or check phone function or check username function`)
+        //console.log(`there is some error in check email function or check phone function or check username function`)
 
         return {
             making_user_signup_status: false
@@ -198,11 +203,11 @@ function get_create_at_and_expire_at(refresh_token) {
 
 // storing the refresh token in db with the created time and expriry time by making Orchestration
 
-async function refresh_token_storing_service(username) {
+async function refresh_token_storing_service(username, user_email, device_info) {
 
-    const access_token = access_create_token(username);
+    const access_token = access_create_token(username, user_email);
 
-    const refresh_token = refresh_create_token(username);
+    const refresh_token = refresh_create_token(username, user_email);
 
     const created_time_and_expire_time = get_create_at_and_expire_at(refresh_token);
 
@@ -210,11 +215,11 @@ async function refresh_token_storing_service(username) {
 
     const expire_at = created_time_and_expire_time.expire_at;
 
-    const divice_info = "test divice";
+    const divice_info = device_info;
 
     const refresh_token_hash = creat_refresh_token_hash(refresh_token);
 
-    console.log(`refresh token hash = ${refresh_token_hash.refresh_token_hash}`)
+    //  console.log(`refresh token hash = ${refresh_token_hash.refresh_token_hash}`)
 
     const user_uuid = await db_functions.get_user_uuid(username);
 
@@ -224,7 +229,7 @@ async function refresh_token_storing_service(username) {
 
         if (inserted_refresh_token_status.insert_refresh_token_hash_indb_status) {
 
-            console.log(`moving forword to return tokens`) 
+            // console.log(`moving forword to return tokens`) 
 
             return {
                 access_token: access_token,
@@ -255,11 +260,151 @@ async function refresh_token_storing_service(username) {
 
 
 
+
+
+
+
+//  LOGIN CODE
+
+// function for finding the data is username or email
+
+function check_isemail(email) {
+
+    let is_email = isEmail(email);
+
+    if (is_email) {
+
+        return true;
+
+    } else {
+
+        return false;
+
+    }
+
+}
+
+
+
+
+
+// verify password for succesfull login
+
+async function verify_pass(password, hash_password) {
+
+    let Is_vaild = await bcrypt.compare(
+        password,
+        hash_password
+    );
+
+    return Is_vaild;
+
+}
+
+
+
+
+
+
+// making the user login
+
+async function making_user_login(email_or_username, password, device_info) {
+
+    let is_email = check_isemail(email_or_username)
+    let hash_password;
+    let verify_password;
+
+    // if user use email for login then this code will run
+    if (is_email) {
+
+        hash_password = await db_functions.get_pass_hash_by_email(email_or_username)
+
+        verify_password = await verify_pass(
+            password,
+            hash_password
+        )
+
+        if (verify_password) {
+
+            const refresh_token_storing_service_status = await refresh_token_storing_service(undefined, email_or_username, device_info)
+
+            // console.log(refresh_token_storing_service_status)
+
+            let access_token = refresh_token_storing_service_status.access_token;
+            let refresh_token = refresh_token_storing_service_status.refresh_token;
+
+            // console.log(`refresh token ${refresh_token}
+            // access token ${access_token}`)
+
+            return {
+                access_token: access_token,
+                refresh_token: refresh_token,
+                making_user_login_status: true
+            };
+
+        } else {
+
+            return {
+                making_user_login_status: false
+            }
+
+        }
+
+    } else {
+
+        hash_password = await db_functions.get_pass_hash_by_username(email_or_username)
+
+        verify_password = await verify_pass(
+            password,
+            hash_password
+        )
+
+        if (verify_password) {
+
+            const refresh_token_storing_service_status = await refresh_token_storing_service(email_or_username, undefined, device_info)
+
+            // console.log(refresh_token_storing_service_status)
+
+            let access_token = refresh_token_storing_service_status.access_token;
+            let refresh_token = refresh_token_storing_service_status.refresh_token;
+
+            // console.log(`refresh token ${refresh_token}
+            // access token ${access_token}`)
+
+            return {
+                access_token: access_token,
+                refresh_token: refresh_token,
+                making_user_login_status: true
+            };
+
+        } else {
+
+            return{
+                making_user_login_status: false
+            }
+
+        }
+    }
+
+}
+
+
+
+
+
+
+
+
+
+
+
+
 module.exports = {
     check_email_availability,
     check_phone_number_availability,
     check_username_availability,
-    making_user_signup
+    making_user_signup,
+    making_user_login
 }
 
 

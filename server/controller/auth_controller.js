@@ -94,12 +94,14 @@ const check_username_availability_controller = async (req, res) => {
 
 // controller for making user signup
 
-const user_signup_ftn = async (req, res) => {
+const user_signup_fnc = async (req, res) => {
 
     let user_email = req.body.user_email;
     let user_phone_no = req.body.user_phone_no;
     let user_username = req.body.user_username;
     let user_pass_unhash = req.body.user_pass;
+    let device_info = req.user.os + ',' + ' ' + req.user.browser
+
 
     let signup_status = await auth_functions.making_user_signup(
 
@@ -107,9 +109,9 @@ const user_signup_ftn = async (req, res) => {
         user_phone_no,
         user_username,
         user_pass_unhash,
-
+        device_info
     )
-    
+
     //console.log(signup_status)
 
     if (signup_status.making_user_signup_status) {
@@ -119,14 +121,14 @@ const user_signup_ftn = async (req, res) => {
 
         res.cookie('refresh_token', refresh_token, {
             httpOnly: true,
-            secure: true,
+            secure: false,
             samesite: "strict",
             maxAge: 1000 * 60 * 60 * 25
         });
 
         res.cookie('access_token', access_token, {
             httpOnly: true,
-            secure: true,
+            secure: false,
             samesite: "strict",
             maxAge: 1000 * 60 * 20
         })
@@ -151,12 +153,79 @@ const user_signup_ftn = async (req, res) => {
 
 
 
+
+
+
+
+
+
+
+
+
+
+
+
+// LOGIN CODE
+
+// controller for making user login
+
+const user_login_fnc = async (req, res) => {
+
+    let user_email_or_username = req.body.user_email_or_username;
+    let password = req.body.password
+    let device_info = req.user.os + ',' + ' ' + req.user.browser
+
+    console.log(user_email_or_username, password)
+
+    let login_status = await auth_functions.making_user_login(user_email_or_username, password, device_info)
+
+
+    if (login_status.making_user_login_status) {
+
+        let refresh_token = login_status.refresh_token;
+        let access_token = login_status.access_token;
+
+        res.cookie('refresh_token', refresh_token, {
+            httpOnly: true,
+            secure: false,
+            samesite: "strict",
+            maxAge: 1000 * 60 * 60 * 25
+        });
+
+        res.cookie('access_token', access_token, {
+            httpOnly: true,
+            secure: false,
+            samesite: "strict",
+            maxAge: 1000 * 60 * 20
+        })
+
+        res.json({
+            login_status: "true"
+        })
+
+
+    } else {
+        res.json({
+            login_status: "false"
+        })
+    }
+
+}
+
+
+
+
+
+
+
+
 module.exports = {
 
     check_email_availability_controller,
     check_phone_number_availability_controller,
     check_username_availability_controller,
-    user_signup_ftn
+    user_signup_fnc,
+    user_login_fnc
 
 }
 

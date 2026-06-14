@@ -133,7 +133,7 @@ async function insert_refresh_token_hash_indb(user_id, refresh_token_hash, devic
 
     try {
         
-        console.log(`starting the function for inserting the refresh token in db ${user_id} ${refresh_token_hash} ${device_info} ${created_time} ${expire_time}`)
+        //console.log(`starting the function for inserting the refresh token in db ${user_id} ${refresh_token_hash} ${device_info} ${created_time} ${expire_time}`)
 
         const result = await pool.query("INSERT INTO refresh_tokens(user_id , token_hash , device_info , created_at , expires_at) VALUES($1,$2,$3,$4,$5)",
             [user_id, refresh_token_hash, device_info, created_time, expire_time]
@@ -164,7 +164,7 @@ async function insert_refresh_token_hash_indb(user_id, refresh_token_hash, devic
 async function get_user_uuid(username) {
     try {
 
-        console.log(username)
+        //console.log(username)
 
         const result = await pool.query("SELECT user_id FROM users WHERE username = $1 LIMIT 1",
             [username]
@@ -183,11 +183,65 @@ async function get_user_uuid(username) {
 
 
 
+
+
+
+async function get_pass_hash_by_email(email) {
+
+    try {
+        
+        const result = await pool.query("SELECT hash_password FROM users WHERE email = $1 LIMIT 1", 
+            [email]
+        )
+
+        return result.rows[0].hash_password;
+
+    } catch (error) {
+        console.log(error)        
+    }
+    
+}
+
+
+
+
+
+
+// getting password hash by username
+
+async function get_pass_hash_by_username(username) {
+    
+    try {
+        
+        const result = await pool.query("SELECT hash_password FROM users WHERE username = $1 LIMIT 1",
+            [username]
+        )
+
+        return result.rows[0].hash_password
+
+    } catch (error) {
+        console.log(error)
+    }
+
+}
+
+
+
+
+
+
+
+
+
+
+
 module.exports = {
     check_email_indb,
     check_phone_number_indb,
     check_username_indb,
     inserting_cred_indb,
     insert_refresh_token_hash_indb,
-    get_user_uuid
+    get_user_uuid,
+    get_pass_hash_by_email,
+    get_pass_hash_by_username
 }

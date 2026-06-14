@@ -1,18 +1,20 @@
-import axios from "axios";
+
 import isEmail from "validator/lib/isEmail";
+import api from "./apis.js"
+
 
 // debounce fnc for showing feedback for email and pass
 
-function debounce(fnc, event_listner_target, frequncy){
+function debounce(fnc, event_listner_target, frequncy) {
 
     let timeout;
 
-    event_listner_target.addEventListener("input", ()=>{
-    clearTimeout(timeout);
-    timeout = setTimeout(()=>{
-               fnc();
-              }, frequncy)
-});
+    event_listner_target.addEventListener("input", () => {
+        clearTimeout(timeout);
+        timeout = setTimeout(() => {
+            fnc();
+        }, frequncy)
+    });
 }
 
 
@@ -31,7 +33,7 @@ let valid_user_pass = "";
 
 //validating email
 
-function validate_email(){
+function validate_email() {
     let user_email = user_email_input.value;
     if (isEmail(user_email)) {
         document.getElementById('email_feedback').textContent = ""
@@ -43,17 +45,17 @@ function validate_email(){
 
 //validating pass
 
-function validate_pass(){
+function validate_pass() {
     let user_pass = user_pass_input.value;
     let checkpass = user_pass.length >= 8 &&
-                    /[A-Z]/.test(user_pass) &&
-                    /[a-z]/.test(user_pass) &&
-                    /[0-9]/.test(user_pass) &&
-                    /[^A-Za-z0-9]/.test(user_pass);
-    if(checkpass){
+        /[A-Z]/.test(user_pass) &&
+        /[a-z]/.test(user_pass) &&
+        /[0-9]/.test(user_pass) &&
+        /[^A-Za-z0-9]/.test(user_pass);
+    if (checkpass) {
         document.getElementById('pass_feedback').textContent = "";
         return valid_user_pass = user_pass
-    } else{
+    } else {
         document.getElementById('pass_feedback').textContent = "Please create a Strong password";
     }
 }
@@ -64,7 +66,7 @@ async function send_email() {
     console.log('sendemail working')
     validate_email();
     try {
-        const response = await axios.post('http://localhost:3000/api/signup/check_email', {
+        const response = await api.post('/signup/check_email', {
             user_email: valid_user_email
         });
         if (response.data.exists === "exist") {
@@ -77,10 +79,10 @@ async function send_email() {
     }
 }
 
-async function send_phone_no(){
+async function send_phone_no() {
     console.log('sending phone no to backend for check')
     try {
-        let response = await axios.post("http://localhost:3000/api/signup/check_phone_no", {
+        let response = await api.post("/signup/check_phone_no", {
             phone_no: user_phone_no_input.value
         })
         if (response.data.phone_no === "not_available") {
@@ -97,12 +99,12 @@ async function send_phone_no(){
 async function send_username() {
     console.log('sending username to backend for check')
     try {
-        let response = await axios.post('http://localhost:3000/api/signup/check_username', {
+        let response = await api.post('/signup/check_username', {
             username: user_username_input.value
-        }) 
+        })
 
         console.log(user_username_input.value)
-         if (response.data.exists === "exist") {
+        if (response.data.exists === "exist") {
             document.getElementById('username_feedback').textContent = "username is already is being used, try a diffrent one"
         } else {
             document.getElementById('username_feedback').textContent = ""
@@ -115,48 +117,48 @@ async function send_username() {
 // sending cred to backend
 
 async function sendcred() {
-    
+
     validate_email();
     validate_pass();
-                                             
+
     try {
-        const response = await axios.post('http://localhost:3000/api/signup/signup', {
+        const response = await api.post('/signup/signup', {
             user_email: valid_user_email,
             user_phone_no: user_phone_no_input.value,
             user_username: user_username_input.value,
             user_pass: valid_user_pass
         })
     }
-    catch(err){
+    catch (err) {
         console.log(err);
     }
 }
 
-function check_user_fillup_or_not(){
+function check_user_fillup_or_not() {
     let sendcred_bulean = true;
-    if(user_email_input.value === ""){
+    if (user_email_input.value === "") {
         document.getElementById('email_feedback').textContent = "Email cannot be empty"
         sendcred_bulean = false;
     }
-    if(user_phone_no_input.value === ""){
+    if (user_phone_no_input.value === "") {
         document.getElementById('phone_feedback').textContent = "Phone No. cannot be empty"
         sendcred_bulean = false;
     }
-    if(user_username_input.value === ""){
+    if (user_username_input.value === "") {
         document.getElementById('username_feedback').textContent = "Username cannot be empty"
         sendcred_bulean = false;
     }
-    if(user_pass_input.value === ""){
+    if (user_pass_input.value === "") {
         document.getElementById('pass_feedback').textContent = "Password cannot be empty"
         sendcred_bulean = false;
     }
-    if(sendcred_bulean){
+    if (sendcred_bulean) {
         console.log("sending data to backend for inserting in db")
         sendcred();
     }
 }
 
-async function login_page(){
+async function login_page() {
     try {
         window.location.href = "/login"
         console.log("sending req to get login page")

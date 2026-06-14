@@ -1,6 +1,8 @@
-import axios from "axios";
-import isEmail from "validator/lib/isEmail";
+
+//import isEmail from "validator/lib/isEmail";
+import api from "./apis.js"
 import "./login.css"
+
 
 const email_or_username_input = document.getElementById("email_or_username_input");
 const email_or_usernamefeedback = document.getElementById("email_or_usernamefeedback");
@@ -17,18 +19,18 @@ async function login_user(){
 
     console.log(`login user fnc is started ${email_or_username}`)
 
-    if(isEmail(email_or_username)){
+    //if(isEmail(email_or_username)){
 
         try {
 
-            let response = await axios.post("http://10.47.43.103:3000/api/login",{
-                email: email_or_username,
+            let response = await api.post("/login/login",{
+                user_email_or_username: email_or_username,
                 password: password
             });
 
-           let auth = response.data.auth;
+           let login_status = response.data.login_status;
             
-           if (auth === "correct_pass") {
+           if (login_status === "correct_pass") {
              window.location.href = '/'
            } else {
             Password_feedback.textContent = "Incorrect password"
@@ -38,28 +40,28 @@ async function login_user(){
             console.log(error);
         }
 
-    } else {
+//     } else {
 
-        try {
+//         try {
 
-            let response = await axios.post("http://10.47.43.103:3000/api/login",{
-                username: email_or_username,
-                password: password
-            });
+//             let response = await api.post("/login/login",{
+//                 username: email_or_username,
+//                 password: password
+//             });
 
-            let auth = response.data.auth;
+//             let auth = response.data.auth;
             
-            if (auth === "correct_pass") {
-              window.location.href = '/'
-            } else {
-              Password_feedback.textContent = "Incorrect password"
-            }
+//             if (auth === "correct_pass") {
+//               window.location.href = '/'
+//             } else {
+//               Password_feedback.textContent = "Incorrect password"
+//             }
 
-        } catch (error) {
-            console.log(error);
-        }
-    }
-}
+//         } catch (error) {
+//             console.log(error);
+//         }
+//     }
+ }
 
 function redirect_signup(){
     window.location.href = "/signup"
