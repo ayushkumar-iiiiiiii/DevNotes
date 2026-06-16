@@ -6,11 +6,15 @@ const { protect_route, get_device_info } = require('./../middleware/auth_middlew
 
 
 router.get('',
-    protect_route,
     send_file_controller_functions.send_home_page,
     //console.log(`homepage is being called in sendfile routes`)
 )
 
+
+router.get('/api/home',
+    protect_route,
+    send_file_controller_functions.send_notes_page
+)
 
 
 router.get('/signup',

@@ -103,7 +103,7 @@ async function inserting_cred_indb(
         return {
             inserting_cred_indb_status: true
         };
-        
+
     } catch (error) {
 
         if (error.code === '23505') {
@@ -117,7 +117,7 @@ async function inserting_cred_indb(
         }
 
         return {
-           inserting_cred_indb_status: false 
+            inserting_cred_indb_status: false
         };
 
     }
@@ -129,10 +129,10 @@ async function inserting_cred_indb(
 
 // function for storing the refresh token in Data base
 
-async function insert_refresh_token_hash_indb(user_id, refresh_token_hash, device_info, created_time, expire_time){
+async function insert_refresh_token_hash_indb(user_id, refresh_token_hash, device_info, created_time, expire_time) {
 
     try {
-        
+
         //console.log(`starting the function for inserting the refresh token in db ${user_id} ${refresh_token_hash} ${device_info} ${created_time} ${expire_time}`)
 
         const result = await pool.query("INSERT INTO refresh_tokens(user_id , token_hash , device_info , created_at , expires_at) VALUES($1,$2,$3,$4,$5)",
@@ -140,15 +140,15 @@ async function insert_refresh_token_hash_indb(user_id, refresh_token_hash, devic
         )
 
         return {
-            insert_refresh_token_hash_indb_status : true
+            insert_refresh_token_hash_indb_status: true
         }
 
     } catch (error) {
-        
+
         console.log(error)
 
         return {
-            insert_refresh_token_hash_indb_status : false
+            insert_refresh_token_hash_indb_status: false
         }
 
     }
@@ -173,9 +173,9 @@ async function get_user_uuid(username) {
         // make a if statment for preventing when user not found and rows are null
 
         let user_id = result.rows[0].user_id;
-        
+
         return user_id;
-        
+
     } catch (error) {
         console.log(error)
     }
@@ -189,17 +189,17 @@ async function get_user_uuid(username) {
 async function get_pass_hash_by_email(email) {
 
     try {
-        
-        const result = await pool.query("SELECT hash_password FROM users WHERE email = $1 LIMIT 1", 
+
+        const result = await pool.query("SELECT hash_password FROM users WHERE email = $1 LIMIT 1",
             [email]
         )
 
         return result.rows[0].hash_password;
 
     } catch (error) {
-        console.log(error)        
+        console.log(error)
     }
-    
+
 }
 
 
@@ -210,9 +210,9 @@ async function get_pass_hash_by_email(email) {
 // getting password hash by username
 
 async function get_pass_hash_by_username(username) {
-    
+
     try {
-        
+
         const result = await pool.query("SELECT hash_password FROM users WHERE username = $1 LIMIT 1",
             [username]
         )
@@ -225,6 +225,23 @@ async function get_pass_hash_by_username(username) {
 
 }
 
+
+
+// function for deleting the refresh token
+
+async function rotate_Rtoken_indb(old_Rtoken_hash, new_Rtoken_hash) {
+
+    try {
+
+        const result = await pool.query("UPDATE refresh_tokens SET token_hash = $1 WHERE token_hash = $2",
+            [new_Rtoken_hash, old_Rtoken_hash]
+        )
+
+    } catch (error) {
+        console.log(error)
+    }
+
+}
 
 
 
@@ -243,5 +260,6 @@ module.exports = {
     insert_refresh_token_hash_indb,
     get_user_uuid,
     get_pass_hash_by_email,
-    get_pass_hash_by_username
+    get_pass_hash_by_username,
+    rotate_Rtoken_indb,
 }

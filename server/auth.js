@@ -23,7 +23,7 @@ const access_create_token = (username, email) => {
         },
         process.env.ACCESS_JWT_SECRET,
         {
-            expiresIn: "10m"
+            expiresIn: "10s"
         }
     )
     return token;
@@ -35,6 +35,7 @@ const refresh_create_token = (username) => {
     const token = jwt.sign(
         {
             username: username,
+            jti: crypto.randomUUID()
         },
         process.env.REFRESH_JWT_SECRET,
         {
@@ -379,7 +380,7 @@ async function making_user_login(email_or_username, password, device_info) {
 
         } else {
 
-            return{
+            return {
                 making_user_login_status: false
             }
 
@@ -387,6 +388,68 @@ async function making_user_login(email_or_username, password, device_info) {
     }
 
 }
+
+
+
+
+
+
+
+// GETTING THE EMAIL FROM THE EXPIRY Atoken
+
+async function Get_Email_and_USER_in_accessT(access_token) {
+
+    const decode = await jwt.decode(access_token)
+
+    const email = decode.email
+
+    const username = decode.username
+
+    return {
+        email: email,
+        username: username
+    }
+
+}
+
+
+
+
+
+// MAKING THE ROTATION LOGIC OF REFRESH TOKEN
+
+async function rotate_Rtoken_fnc(old_Rtoken, username, email) {
+
+    try {
+
+        let old_Rtoken_hash = await creat_refresh_token_hash(old_Rtoken).refresh_token_hash
+
+        let new_Rtoken = refresh_create_token(username)
+        let new_Atoken = access_create_token(username, email)
+
+        let new_Rtoken_hash = await creat_refresh_token_hash(new_Rtoken).refresh_token_hash
+
+        //console.log(old_Rtoken_hash, new_Rtoken_hash)
+
+        await db_functions.rotate_Rtoken_indb(old_Rtoken_hash, new_Rtoken_hash)
+
+        return {
+            access_token: new_Atoken,
+            refresh_token: new_Rtoken,
+            rotate_Rtoken_fnc_status: true
+        }
+
+
+    } catch (error) {
+        console.log(error)
+        // fix the error that when the new r token is updated it does not change the created time and expiry time
+        return {
+            rotate_Rtoken_fnc_status: false
+        }
+    }
+}
+
+
 
 
 
@@ -404,7 +467,9 @@ module.exports = {
     check_phone_number_availability,
     check_username_availability,
     making_user_signup,
-    making_user_login
+    making_user_login,
+    Get_Email_and_USER_in_accessT,
+    rotate_Rtoken_fnc,
 }
 
 

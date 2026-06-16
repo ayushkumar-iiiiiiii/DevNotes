@@ -25,6 +25,8 @@ app.use('/api/signup', auth_router);
 
 app.use('/api/login', auth_router);
 
+app.use('/api/rotateRtoken', auth_router)
+
 app.use(express.static(
     path.join(__dirname, '..', 'Static')
 ))

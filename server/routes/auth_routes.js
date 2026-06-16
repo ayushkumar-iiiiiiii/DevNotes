@@ -15,5 +15,7 @@ router.post('/signup', get_device_info, auth_controller.user_signup_fnc);
 
 router.post('/login', get_device_info, auth_controller.user_login_fnc);
 
+router.get('', get_device_info, auth_controller.rotate_Rtoken_cntl)
+
 
 module.exports = router;

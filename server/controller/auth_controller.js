@@ -215,7 +215,49 @@ const user_login_fnc = async (req, res) => {
 
 
 
+// Refresh token rotation controller
 
+const rotate_Rtoken_cntl = async (req, res) => {
+
+    const old_Atoken = req.cookie.access_token
+    const old_Rtoken = req.cookie.refresh_token
+
+    const username = await auth_functions.Get_Email_and_USER_in_accessT(old_Atoken).username
+    const email = await auth_functions.Get_Email_and_USER_in_accessT(old_Atoken).email
+
+    const rotate_Rtoken_fnc_status = await auth_functions.rotate_Rtoken_fnc(old_Rtoken, username, email)
+
+    if (rotate_Rtoken_fnc_status.rotate_Rtoken_fnc_status) {
+
+        let refresh_token = rotate_Rtoken_fnc_status.refresh_token;
+        let access_token = rotate_Rtoken_fnc_status.access_token;
+
+        res.cookie('refresh_token', refresh_token, {
+            httpOnly: true,
+            secure: false,
+            samesite: "strict",
+            maxAge: 1000 * 60 * 60 * 25
+        });
+
+        res.cookie('access_token', access_token, {
+            httpOnly: true,
+            secure: false,
+            samesite: "strict",
+            maxAge: 1000 * 60 * 20
+        })
+
+        res.json({
+            login_status: "true"
+        })
+
+
+    } else {
+        res.json({
+            rotation: "false"
+        })
+    }
+
+}
 
 
 
@@ -225,7 +267,8 @@ module.exports = {
     check_phone_number_availability_controller,
     check_username_availability_controller,
     user_signup_fnc,
-    user_login_fnc
+    user_login_fnc,
+    rotate_Rtoken_cntl
 
 }
 

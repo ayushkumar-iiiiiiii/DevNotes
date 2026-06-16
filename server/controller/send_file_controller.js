@@ -19,6 +19,10 @@ const send_home_page = async (req, res)=>{
     //console.log(`home page is called in contrler`)
 }
 
+const send_notes_page = async (req, res)=>{
+    res.sendFile(path.join(__dirname, '..', '..', 'Static', 'index1.html'))
+}
+
 
 
 const send_login_page = async (req, res)=>{
@@ -30,5 +34,6 @@ module.exports = {
     send_signup_page,
     // send_scr_files,
     send_home_page,
-    send_login_page
+    send_login_page,
+    send_notes_page
 }

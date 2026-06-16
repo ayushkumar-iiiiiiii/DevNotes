@@ -1,0 +1,1 @@
+import{t as e}from"./apis-e96X2Vb_.js";import"./modulepreload-polyfill-BxR_cmXS.js";document.getElementById(`btn`).addEventListener(`click`,async()=>{let t=await e.get(`/home`);t.status==401&&console.log(`fuckyou`),console.log(t)});
