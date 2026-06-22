@@ -5,7 +5,7 @@ import axios from "axios";
 
 // creating the axios instance
 
-const api = axios.create({
+const data_api = axios.create({
     baseURL: 'http://localhost:3000/api',
     timeout: 10000,
     withCredentials: true,
@@ -13,10 +13,17 @@ const api = axios.create({
 
 
 
+const page_api = axios.create({
+    baseURL: 'http://localhost:3000/',
+    timeout: 10000,
+    withCredentials: true,
+})
+
+
 
 // interceptor for checking the error code in responce from the server 
 
-api.interceptors.response.use(
+data_api.interceptors.response.use(
     (response) => {
 
 
@@ -27,14 +34,18 @@ api.interceptors.response.use(
 
         if (error.status == 401 && error.response.data.massage == "invalid token") {
             // redirect the user to the ' semting went wrong plzz re loging  '
+
+            console.log('invalid token')
         }
 
         if (error.status == 401 && error.response.data.massage == "token expire") {
-            api.get('/rotateRtoken')
+            data_api.get('/rotateRtoken')
+            console.log('rotetion started')
         }
 
         if (error.status == 401 && error.response.data.massage == "token not found") {
             // redirect the user to the ' semting went wrong plzz re loging  '
+            console.log('token not found')
         }
 
         return error;
@@ -42,4 +53,4 @@ api.interceptors.response.use(
     }
 )
 
-export default api;
+export {data_api, page_api};

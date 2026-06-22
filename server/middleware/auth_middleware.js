@@ -12,7 +12,12 @@ const protect_route = async (req, res, next) => {
 
     let access_token = req.cookies.access_token
 
+    console.log('protected route is called')
+
     if (!access_token) {
+
+        console.log("token not found")
+
         return res.status(401).json({
             massage: "token not found"
         })
@@ -28,12 +33,18 @@ const protect_route = async (req, res, next) => {
     } catch (error) {
 
         if(error.name === 'JsonWebTokenError'){
+
+            console.log("invalid token")
+
             return res.status(401).json({
             massage: "invalid token"
         })
         }
 
         if(error.name === 'TokenExpiredError'){
+
+            console.log("token expire")
+
             return res.status(401).json({
             massage: "token expire"
         })

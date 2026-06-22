@@ -20,7 +20,7 @@ const send_home_page = async (req, res)=>{
 }
 
 const send_notes_page = async (req, res)=>{
-    res.sendFile(path.join(__dirname, '..', '..', 'Static', 'index1.html'))
+    res.sendFile(path.join(__dirname, '..', '..', 'Static', 'notes.html'))
 }
 
 

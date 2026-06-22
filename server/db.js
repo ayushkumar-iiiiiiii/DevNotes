@@ -164,11 +164,13 @@ async function insert_refresh_token_hash_indb(user_id, refresh_token_hash, devic
 async function get_user_uuid(username) {
     try {
 
-        //console.log(username)
+        console.log(username)
 
         const result = await pool.query("SELECT user_id FROM users WHERE username = $1 LIMIT 1",
             [username]
         )
+
+        //console.log(result)
 
         // make a if statment for preventing when user not found and rows are null
 
@@ -252,6 +254,53 @@ async function rotate_Rtoken_indb(old_Rtoken_hash, new_Rtoken_hash) {
 
 
 
+
+
+
+// LOGIC FOR NOTES 
+
+// getting the notes for a perticular user
+
+async function get_notes_indb(user_id) {
+
+    try {
+
+        const result = await pool.query("SELECT note_id, content, title, subject, tags, TO_CHAR(created_at, 'DD/MM/YY') AS created_date, TO_CHAR(created_at, 'HH24:MI') AS created_time FROM notes WHERE user_id = $1",
+            [user_id]
+        )
+
+        return result.rows
+
+    } catch (error) {
+        console.log(error)
+    }
+
+}
+
+
+
+
+
+
+// function for updating the note updating/saving changes
+
+async function update_note_indb(note_id, title, subject, note_main_contant) {
+
+    try {
+
+        const result = await pool.query(" UPDATE notes SET title = $1, subject = $2, content = $3 WHERE note_id = $4",
+            [title, subject, note_main_contant, note_id]
+        )
+
+    } catch (error) {
+        console.log(error)
+    }
+
+}
+
+
+
+
 module.exports = {
     check_email_indb,
     check_phone_number_indb,
@@ -262,4 +311,6 @@ module.exports = {
     get_pass_hash_by_email,
     get_pass_hash_by_username,
     rotate_Rtoken_indb,
+    get_notes_indb,
+    update_note_indb
 }

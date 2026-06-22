@@ -1,0 +1,1 @@
+import"./apis-CQf8pt3P.js";document.getElementById(`btn`).addEventListener(`click`,async()=>{console.log(response)});

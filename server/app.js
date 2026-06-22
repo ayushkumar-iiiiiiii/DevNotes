@@ -5,6 +5,7 @@ const cookieParser = require('cookie-parser');
 
 const auth_router = require("./routes/auth_routes")
 const send_file_router = require('./routes/send_files_routs')
+const notes_router = require("./routes/notes_router")
 
 
 
@@ -25,7 +26,10 @@ app.use('/api/signup', auth_router);
 
 app.use('/api/login', auth_router);
 
-app.use('/api/rotateRtoken', auth_router)
+app.use('/api/rotateRtoken', auth_router);
+
+app.use('/api/notes', notes_router);
+
 
 app.use(express.static(
     path.join(__dirname, '..', 'Static')

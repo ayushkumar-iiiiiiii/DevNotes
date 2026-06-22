@@ -1,6 +1,6 @@
 
 //import isEmail from "validator/lib/isEmail";
-import api from "./apis.js"
+import {data_api, page_api} from "./apis.js"
 import "./login.css"
 
 
@@ -23,7 +23,7 @@ async function login_user(){
 
         try {
 
-            let response = await api.post("/login/login",{
+            let response = await data_api.post("/login/login",{
                 user_email_or_username: email_or_username,
                 password: password
             });

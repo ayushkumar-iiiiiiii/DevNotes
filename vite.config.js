@@ -9,7 +9,7 @@ export default defineConfig({
                 home: "./index.html",
                 signup: "./signup.html",
                 login: "./login.html",
-                home1: "./index1.html"
+                notes: "./notes.html"
             }
         }
     }

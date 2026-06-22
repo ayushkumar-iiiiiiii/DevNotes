@@ -23,7 +23,7 @@ const access_create_token = (username, email) => {
         },
         process.env.ACCESS_JWT_SECRET,
         {
-            expiresIn: "10s"
+            expiresIn: "1d"
         }
     )
     return token;

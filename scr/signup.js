@@ -1,6 +1,6 @@
 
 import isEmail from "validator/lib/isEmail";
-import api from "./apis.js"
+import {data_api, page_api} from "./apis.js"
 
 
 // debounce fnc for showing feedback for email and pass
@@ -66,7 +66,7 @@ async function send_email() {
     console.log('sendemail working')
     validate_email();
     try {
-        const response = await api.post('/signup/check_email', {
+        const response = await data_api.post('/signup/check_email', {
             user_email: valid_user_email
         });
         if (response.data.exists === "exist") {
@@ -82,7 +82,7 @@ async function send_email() {
 async function send_phone_no() {
     console.log('sending phone no to backend for check')
     try {
-        let response = await api.post("/signup/check_phone_no", {
+        let response = await data_api.post("/signup/check_phone_no", {
             phone_no: user_phone_no_input.value
         })
         if (response.data.phone_no === "not_available") {
@@ -99,7 +99,7 @@ async function send_phone_no() {
 async function send_username() {
     console.log('sending username to backend for check')
     try {
-        let response = await api.post('/signup/check_username', {
+        let response = await data_api.post('/signup/check_username', {
             username: user_username_input.value
         })
 
@@ -122,7 +122,7 @@ async function sendcred() {
     validate_pass();
 
     try {
-        const response = await api.post('/signup/signup', {
+        const response = await data_api.post('/signup/signup', {
             user_email: valid_user_email,
             user_phone_no: user_phone_no_input.value,
             user_username: user_username_input.value,
