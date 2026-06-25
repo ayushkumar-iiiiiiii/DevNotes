@@ -265,7 +265,7 @@ async function get_notes_indb(user_id) {
 
     try {
 
-        const result = await pool.query("SELECT note_id, content, title, subject, tags, TO_CHAR(created_at, 'DD/MM/YY') AS created_date, TO_CHAR(created_at, 'HH24:MI') AS created_time FROM notes WHERE user_id = $1",
+        const result = await pool.query("SELECT note_id, content, title, subject, tags, TO_CHAR(created_at, 'DD/MM/YY') AS created_date, TO_CHAR(created_at, 'HH24:MI') AS created_time FROM notes WHERE user_id = $1 ORDER BY updated_at DESC",
             [user_id]
         )
 
@@ -288,7 +288,7 @@ async function update_note_indb(note_id, title, subject, note_main_contant) {
 
     try {
 
-        const result = await pool.query(" UPDATE notes SET title = $1, subject = $2, content = $3 WHERE note_id = $4",
+        const result = await pool.query(" UPDATE notes SET title = $1, subject = $2, content = $3, updated_at = NOW() WHERE note_id = $4",
             [title, subject, note_main_contant, note_id]
         )
 

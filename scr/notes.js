@@ -1,4 +1,4 @@
-import "./index.css"
+import "./notes.css"
 import { data_api, page_api } from "./apis"
 
 
