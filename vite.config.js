@@ -6,10 +6,11 @@ export default defineConfig({
         emptyOutDir: true,
         rollupOptions : {
             input: {
-                home: "./index.html",
-                signup: "./signup.html",
-                login: "./login.html",
-                notes: "./notes.html"
+                home: "./scr_html/index.html",
+                signup: "./scr_html/signup.html",
+                login: "./scr_html/login.html",
+                notes: "./scr_html/notes.html",
+                learnmore: "./scr_html/learnmore.html"
             }
         }
     }

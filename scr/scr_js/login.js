@@ -1,7 +1,7 @@
 
 //import isEmail from "validator/lib/isEmail";
 import {data_api, page_api} from "./apis.js"
-import "./login.css"
+import "./../scr_css/login.css"
 
 
 const email_or_username_input = document.getElementById("email_or_username_input");

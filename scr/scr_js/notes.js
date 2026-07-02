@@ -1,4 +1,4 @@
-import "./notes.css"
+import "./../scr_css/notes.css"
 import { data_api, page_api } from "./apis"
 
 
@@ -32,6 +32,9 @@ async function get_notes() {
 
     } catch (error) {
         console.log(error)
+        if(error.status == 401 && error.response.data.massage == "token not found"){
+            console.log('get note error')
+        }
     }
 }
 
@@ -82,7 +85,7 @@ async function create_notes() {
         date.textContent = element.created_date
 
 
-        note_div.append(title, subject, content, tag_container, date);
+        note_div.append(title, subject, tag_container, date);
         all_notes_fragment.appendChild(note_div)
 
         note_div.addEventListener("click", () => {
@@ -118,7 +121,7 @@ function change_url_as_notId() {
     history.pushState(
         {},
         "",
-        `/api/notes/${clicked_note_id}`
+        `/${clicked_note_id}`
     )
 
 }
@@ -129,7 +132,7 @@ function change_url_as_normal() {
     history.pushState(
         {},
         "",
-        "/api/notes"
+        "/"
     )
 }
 
@@ -216,7 +219,7 @@ all_notes.addEventListener("click", (event) => {
 
 
 close_editor.addEventListener("click", () => {
-    main_contant.style.display = "block"
+    main_contant.style.display = "grid"
     note_editor.style.display = "none"
     opened_editor_ID = null
 })
@@ -232,3 +235,5 @@ save_btn.addEventListener("click", () => {
 
 
 close_editor.addEventListener("click", change_url_as_normal)
+
+

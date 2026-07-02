@@ -186,7 +186,7 @@ async function get_user_uuid(username) {
 
 
 
-
+// getting the pass hash by email
 
 async function get_pass_hash_by_email(email) {
 
@@ -220,6 +220,47 @@ async function get_pass_hash_by_username(username) {
         )
 
         return result.rows[0].hash_password
+
+    } catch (error) {
+        console.log(error)
+    }
+
+}
+
+
+
+
+// function for getting the username by email
+
+async function get_username_by_email(email) {
+
+    try {
+
+        const result = await pool.query('SELECT username FROM users WHERE email = $1',
+            [email]
+        )
+
+        return result.rows[0].username
+
+    } catch (error) {
+        console.log(error)
+    }
+
+}
+
+
+
+// function for getting the email by username
+
+async function get_email_by_username(username) {
+
+    try {
+
+        const result = await pool.query('SELECT email FROM users WHERE username = $1',
+            [username]
+        )
+
+        return result.rows[0].email
 
     } catch (error) {
         console.log(error)
@@ -312,5 +353,7 @@ module.exports = {
     get_pass_hash_by_username,
     rotate_Rtoken_indb,
     get_notes_indb,
-    update_note_indb
+    update_note_indb,
+    get_username_by_email,
+    get_email_by_username
 }

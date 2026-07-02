@@ -3,14 +3,12 @@ const router = express.Router();
 const path = require("path");
 const send_file_controller_functions = require('../controller/send_file_controller')
 const { protect_route, get_device_info } = require('./../middleware/auth_middleware')
+const send_file_middleware  = require('./../middleware/send_file_middleware')
 
 
 
 
 
-router.get('/api/notes',
-    send_file_controller_functions.send_notes_page
-)
 
 
 // router.get('/api/notes/:id',
@@ -32,7 +30,12 @@ router.get('/login',
 )
 
 
+router.get('/learnmore', 
+    send_file_controller_functions.send_learnmore_page)
+
+
 router.get('',
+    send_file_middleware.check_token_middleware,
     send_file_controller_functions.send_home_page,
     //console.log(`homepage is being called in sendfile routes`)
 )

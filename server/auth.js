@@ -23,7 +23,7 @@ const access_create_token = (username, email) => {
         },
         process.env.ACCESS_JWT_SECRET,
         {
-            expiresIn: "1d"
+            expiresIn: "1h"
         }
     )
     return token;
@@ -31,15 +31,16 @@ const access_create_token = (username, email) => {
 
 // creating refresh token 
 
-const refresh_create_token = (username) => {
+const refresh_create_token = (username, email) => {
     const token = jwt.sign(
         {
             username: username,
+            email: email,
             jti: crypto.randomUUID()
         },
         process.env.REFRESH_JWT_SECRET,
         {
-            expiresIn: "3d"
+            expiresIn: "7d"
         }
     )
     return token;
@@ -318,6 +319,8 @@ async function making_user_login(email_or_username, password, device_info) {
     // if user use email for login then this code will run
     if (is_email) {
 
+        let username = await db_functions.get_username_by_email(email_or_username)
+
         hash_password = await db_functions.get_pass_hash_by_email(email_or_username)
 
         verify_password = await verify_pass(
@@ -327,7 +330,9 @@ async function making_user_login(email_or_username, password, device_info) {
 
         if (verify_password) {
 
-            const refresh_token_storing_service_status = await refresh_token_storing_service(undefined, email_or_username, device_info)
+            console.log('pass is correct')
+
+            const refresh_token_storing_service_status = await refresh_token_storing_service(username, email_or_username, device_info)
 
             // console.log(refresh_token_storing_service_status)
 
@@ -345,6 +350,8 @@ async function making_user_login(email_or_username, password, device_info) {
 
         } else {
 
+            console.log('pass is incorrect')
+
             return {
                 making_user_login_status: false
             }
@@ -352,6 +359,8 @@ async function making_user_login(email_or_username, password, device_info) {
         }
 
     } else {
+
+        let email = await db_functions.get_email_by_username(email_or_username)
 
         hash_password = await db_functions.get_pass_hash_by_username(email_or_username)
 
@@ -362,7 +371,9 @@ async function making_user_login(email_or_username, password, device_info) {
 
         if (verify_password) {
 
-            const refresh_token_storing_service_status = await refresh_token_storing_service(email_or_username, undefined, device_info)
+            console.log('pass is correct')
+
+            const refresh_token_storing_service_status = await refresh_token_storing_service(email_or_username, email, device_info)
 
             // console.log(refresh_token_storing_service_status)
 
@@ -379,6 +390,8 @@ async function making_user_login(email_or_username, password, device_info) {
             };
 
         } else {
+
+            console.log('pass is incorrect')
 
             return {
                 making_user_login_status: false
@@ -414,6 +427,28 @@ async function Get_Email_and_USER_in_accessT(access_token) {
 
 
 
+// getting the email from refresh token
+
+async function Get_Email_and_USER_in_refreshT(refresh_token) {
+
+    const decode = await jwt.decode(refresh_token)
+
+    console.log(`mf docode lund`, decode)
+
+    const email = decode.email
+
+    const username = decode.username
+
+
+    return {
+        email: email,
+        username: username
+    }
+
+}
+
+
+
 
 
 // MAKING THE ROTATION LOGIC OF REFRESH TOKEN
@@ -424,7 +459,7 @@ async function rotate_Rtoken_fnc(old_Rtoken, username, email) {
 
         let old_Rtoken_hash = await creat_refresh_token_hash(old_Rtoken).refresh_token_hash
 
-        let new_Rtoken = refresh_create_token(username)
+        let new_Rtoken = refresh_create_token(username, email)
         let new_Atoken = access_create_token(username, email)
 
         let new_Rtoken_hash = await creat_refresh_token_hash(new_Rtoken).refresh_token_hash
@@ -469,6 +504,7 @@ module.exports = {
     making_user_signup,
     making_user_login,
     Get_Email_and_USER_in_accessT,
+    Get_Email_and_USER_in_refreshT,
     rotate_Rtoken_fnc,
 }
 

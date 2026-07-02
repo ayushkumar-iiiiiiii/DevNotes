@@ -16,7 +16,7 @@ router.get('/get_notes', protect_route, notes_cntrl.get_notes_data_cntrl)
 
 router.patch('/save-note', protect_route, notes_cntrl.update_note)
 
-router.get('/:id',  send_file_controller_functions.send_notes_page)
+//router.get('/:id',  send_file_controller_functions.send_notes_page)
 
 
 

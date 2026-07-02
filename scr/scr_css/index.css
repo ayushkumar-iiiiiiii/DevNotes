@@ -179,7 +179,9 @@ body {
     background-color: var(--surface);
     display: flex;
     align-items: center;
-    justify-content:space-around;
+    flex-wrap: wrap;
+    column-gap: 8rem;
+    row-gap: 0;
     border: 1px solid var(--border);
 }
 
@@ -188,4 +190,8 @@ body {
     background-color: #ffffff;
     border: none;
     border-bottom: 1px solid black;
+
 }
+
+
+

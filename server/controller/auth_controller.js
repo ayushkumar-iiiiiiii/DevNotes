@@ -130,7 +130,7 @@ const user_signup_fnc = async (req, res) => {
             httpOnly: true,
             secure: false,
             samesite: "strict",
-            maxAge: 1000 * 60 * 60 * 24 * 7
+            maxAge: 1000 * 60 * 60
         })
 
         res.json({
@@ -196,7 +196,7 @@ const user_login_fnc = async (req, res) => {
             httpOnly: true,
             secure: false,
             samesite: "strict",
-            maxAge: 1000 * 60 * 60 * 24
+            maxAge: 1000 * 60 * 60
         })
 
         res.json({
@@ -219,14 +219,21 @@ const user_login_fnc = async (req, res) => {
 
 const rotate_Rtoken_cntl = async (req, res) => {
 
+
     console.log("starting controller for rotetion")
 
     const old_Atoken = req.cookies.access_token
     const old_Rtoken = req.cookies.refresh_token
 
-    const username = await auth_functions.Get_Email_and_USER_in_accessT(old_Atoken).username
-    console.log(`controller ${username}`)
-    const email = await auth_functions.Get_Email_and_USER_in_accessT(old_Atoken).email
+    const old_Rtoken_payload = await auth_functions.Get_Email_and_USER_in_refreshT(old_Rtoken)
+
+    console.log(old_Rtoken_payload)
+
+    const username = old_Rtoken_payload.username
+    // console.log(`controller ${username}`)
+    const email = old_Rtoken_payload.email
+
+    console.log(username, email)
 
     const rotate_Rtoken_fnc_status = await auth_functions.rotate_Rtoken_fnc(old_Rtoken, username, email)
 
@@ -239,14 +246,14 @@ const rotate_Rtoken_cntl = async (req, res) => {
             httpOnly: true,
             secure: false,
             samesite: "strict",
-            maxAge: 1000 * 60 * 60 * 25
+            maxAge: 1000 * 60 * 60 * 24 * 7
         });
 
         res.cookie('access_token', access_token, {
             httpOnly: true,
             secure: false,
             samesite: "strict",
-            maxAge: 1000 * 60 * 20
+            maxAge: 1000 * 60 * 60
         })
 
         res.json({
