@@ -270,7 +270,7 @@ async function get_email_by_username(username) {
 
 
 
-// function for deleting the refresh token
+// function for updating the refresh token
 
 async function rotate_Rtoken_indb(old_Rtoken_hash, new_Rtoken_hash) {
 
@@ -284,6 +284,33 @@ async function rotate_Rtoken_indb(old_Rtoken_hash, new_Rtoken_hash) {
         console.log(error)
     }
 
+}
+
+
+
+
+
+// function for deleteing the refresh token in db
+
+async function delete_r_token_indb(R_token_hash) {
+
+    try {
+
+        const result = await pool.query("DELETE FROM refresh_tokens WHERE token_hash = $1",
+            [R_token_hash]
+        )
+
+        if(result.rowCount === 1){
+           return true 
+        } else{
+            return false
+        }
+        
+    } catch (error) {
+        console.log(error)
+        return false
+    }
+    
 }
 
 
@@ -424,5 +451,6 @@ module.exports = {
     get_username_by_email,
     get_email_by_username,
     get_one_note_indb,
-    get_timestamp_by_note_id
+    get_timestamp_by_note_id,
+    delete_r_token_indb
 }

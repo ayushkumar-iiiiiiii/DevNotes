@@ -269,6 +269,36 @@ const rotate_Rtoken_cntl = async (req, res) => {
 
 
 
+// controller for making the user logout
+
+const logout_user_cntl = async (req, res) => {
+
+    const R_token = req.cookies.refresh_token
+
+    const logout_status = await auth_functions.logout_user_fnc(R_token)
+
+    console.log(logout_status)
+
+    if (logout_status) {
+
+        res.clearCookie('refresh_token')
+
+        res.clearCookie('access_token')
+        
+        res.json({
+            logout_status: "true"
+        })
+
+    } else {
+        res.json({
+            logout_status: "true"
+        })
+    }
+
+}
+
+
+
 module.exports = {
 
     check_email_availability_controller,
@@ -276,8 +306,8 @@ module.exports = {
     check_username_availability_controller,
     user_signup_fnc,
     user_login_fnc,
-    rotate_Rtoken_cntl
-
+    rotate_Rtoken_cntl,
+    logout_user_cntl
 }
 
 

@@ -9,7 +9,8 @@ const note_editor = document.getElementById("note_editor");
 const close_editor = document.getElementById("close_editor");
 const save_btn = document.getElementById("savebtn");
 const main_contant_container = document.getElementById("main_content_container")
-const tell_the_page_is_end = document.getElementById('tell_the_page_is_end')
+const tell_the_page_is_end = document.getElementById("tell_the_page_is_end")
+const logout_btn = document.getElementById("logout_btn")
 // const editor_title_input = document.getElementById("title");
 // const editor_subject_inputs = document.getElementById("subject");
 // const editor_content_input = document.getElementById("notes_main_contant");
@@ -403,22 +404,6 @@ async function update_note(note_id) {
 
 // function for handling the loading of more notes
 
-async function hand_loading_notes() {
- 
-    setTimeout(()=>{
-
-    })
-
-}
-
-
-
-
-
-
-// knowing that when to load more notes
-
-
 
 let loading = false;
 
@@ -442,7 +427,28 @@ main_contant_container.addEventListener("scroll", async () => {
     } finally {
         loading = false;
     }
-});
+})
+
+
+
+
+
+
+// logout funtion
+
+async function logout() {
+
+    try {
+
+        const response = await data_api.delete('/logout/logout')
+        
+    } catch (error) {
+        console.log(error)
+    }
+    
+}
+
+logout_btn.addEventListener('click', logout)
 
 
 

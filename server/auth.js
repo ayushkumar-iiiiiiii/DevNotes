@@ -487,6 +487,32 @@ async function rotate_Rtoken_fnc(old_Rtoken, username, email) {
 
 
 
+// LOGIC FOR LOGOUT
+
+async function logout_user_fnc(R_token){
+
+    try {
+
+        console.log('resfrsh toekn is ', R_token)
+    
+        const R_token_hash = await creat_refresh_token_hash(R_token).refresh_token_hash
+
+        console.log('r token hash ', R_token_hash)
+
+        const delete_r_token_status = await db_functions.delete_r_token_indb(R_token_hash)
+
+        return delete_r_token_status
+        
+    } catch (error) {
+        console.log(error)
+    }
+}
+
+
+
+
+
+
 
 
 
@@ -504,6 +530,7 @@ module.exports = {
     Get_Email_and_USER_in_accessT,
     Get_Email_and_USER_in_refreshT,
     rotate_Rtoken_fnc,
+    logout_user_fnc
 }
 
 
