@@ -241,6 +241,10 @@
     font-weight: 500;
 }
 
+.notes_content{
+    display: none;
+}
+
 .tag_container {
     display: flex;
     flex-wrap: wrap;
@@ -357,11 +361,13 @@
 #title {
     font-size: 2rem;
     font-weight: 700;
+    border-bottom: 1px solid #e2e8f0;
 }
 
 #subject {
     font-size: 1rem;
     color: #64748b;
+    border-bottom: 1px solid #e2e8f0;
 }
 
 #notes_main_contant {

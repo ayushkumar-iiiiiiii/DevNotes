@@ -14,7 +14,11 @@ const send_file_controller_functions = require('../controller/send_file_controll
 
 router.get('/get_notes', protect_route, notes_cntrl.get_notes_data_cntrl)
 
-router.patch('/save-note', protect_route, notes_cntrl.update_note)
+router.get('/scrolling_get_notes', protect_route, notes_cntrl.get_scrolling_note_data_cntrl)
+
+router.patch('/save-note', protect_route, notes_cntrl.update_note_cntrl)
+
+router.get('/get_one_note', protect_route, notes_cntrl.one_note_data_cntrl)
 
 //router.get('/:id',  send_file_controller_functions.send_notes_page)
 

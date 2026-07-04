@@ -433,8 +433,6 @@ async function Get_Email_and_USER_in_refreshT(refresh_token) {
 
     const decode = await jwt.decode(refresh_token)
 
-    console.log(`mf docode lund`, decode)
-
     const email = decode.email
 
     const username = decode.username

@@ -175,8 +175,6 @@ const user_login_fnc = async (req, res) => {
     let password = req.body.password
     let device_info = req.user.os + ',' + ' ' + req.user.browser
 
-    console.log(user_email_or_username, password)
-
     let login_status = await auth_functions.making_user_login(user_email_or_username, password, device_info)
 
 

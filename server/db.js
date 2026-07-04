@@ -302,22 +302,67 @@ async function rotate_Rtoken_indb(old_Rtoken_hash, new_Rtoken_hash) {
 
 // getting the notes for a perticular user
 
-async function get_notes_indb(user_id) {
+async function get_notes_indb(user_id, last_update_time, note_id) {
 
-    try {
+    if (last_update_time == null) {
 
-        const result = await pool.query("SELECT note_id, content, title, subject, tags, TO_CHAR(created_at, 'DD/MM/YY') AS created_date, TO_CHAR(created_at, 'HH24:MI') AS created_time FROM notes WHERE user_id = $1 ORDER BY updated_at DESC",
-            [user_id]
-        )
+        console.log('last upedated note is not workig in db')
 
-        return result.rows
+        try {
 
-    } catch (error) {
-        console.log(error)
+            const result = await pool.query("SELECT note_id, content, title, subject, tags, TO_CHAR(created_at, 'DD/MM/YY') AS created_date, TO_CHAR(created_at, 'HH24:MI') AS created_time FROM notes WHERE user_id = $1 ORDER BY updated_at DESC LIMIT 40",
+                [user_id]
+            )
+
+            return result.rows
+
+        } catch (error) {
+            console.log(error)
+        }
+    }
+
+    if (last_update_time !== null) {
+
+        console.log('last upedated note is workig in db')
+
+        console.log(user_id, last_update_time, note_id)
+
+        try {
+
+            const result = await pool.query("SELECT note_id, content, title, subject, tags, TO_CHAR(created_at, 'DD/MM/YY') AS created_date, TO_CHAR(created_at, 'HH24:MI') AS created_time FROM notes WHERE user_id = $1 AND (updated_at, note_id) < ($2, $3) ORDER BY updated_at DESC LIMIT 40",
+                [user_id, last_update_time, note_id]
+            )
+
+            console.log(result.rows)
+
+            return result.rows
+
+        } catch (error) {
+            console.log(error)
+        }
+
     }
 
 }
 
+
+// function for getting timestamp using the note id
+
+async function get_timestamp_by_note_id(note_id) {
+
+    try {
+
+        const result = await pool.query("SELECT updated_at FROM notes WHERE note_id = $1",
+            [note_id]
+        )
+        
+        return result.rows[0].updated_at
+
+    } catch (error) {
+        console.log(error)
+    }
+    
+}
 
 
 
@@ -329,6 +374,8 @@ async function update_note_indb(note_id, title, subject, note_main_contant) {
 
     try {
 
+        console.log(note_id)
+
         const result = await pool.query(" UPDATE notes SET title = $1, subject = $2, content = $3, updated_at = NOW() WHERE note_id = $4",
             [title, subject, note_main_contant, note_id]
         )
@@ -337,6 +384,26 @@ async function update_note_indb(note_id, title, subject, note_main_contant) {
         console.log(error)
     }
 
+}
+
+
+
+// function for getting only one note
+
+async function get_one_note_indb(note_id) {
+
+    try {
+
+        const result = await pool.query("SELECT content, title, subject, tags, TO_CHAR(created_at, 'DD/MM/YY') AS created_date, TO_CHAR(created_at, 'HH24:MI') AS created_time FROM notes WHERE note_id = $1",
+            [note_id]
+        )
+
+        return result.rows
+        
+    } catch (error) {
+        console.log(error)
+    }
+    
 }
 
 
@@ -355,5 +422,7 @@ module.exports = {
     get_notes_indb,
     update_note_indb,
     get_username_by_email,
-    get_email_by_username
+    get_email_by_username,
+    get_one_note_indb,
+    get_timestamp_by_note_id
 }

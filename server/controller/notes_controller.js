@@ -28,31 +28,93 @@ const get_notes_data_cntrl = async (req, res) => {
 }
 
 
-// controller for updating the note
+// controller for getting the notes while scrolling 
 
-const update_note = async (req, res) => {
-
-    const note_id = req.body.note_id
-
-    const updated_title = req.body.title
-    
-    const updated_subject = req.body.subject;
-    
-    const updated_content = req.body.note_main_contant
+const get_scrolling_note_data_cntrl = async (req,res) => {
 
     try {
-        
-        await S_notes_fnc.update_note(note_id, updated_title, updated_subject, updated_content)
 
+        const username = req.user.username
+
+        const note_id = req.query.last_note_id
+
+        const note_data = await S_notes_fnc.get_notes_scrolling(note_id, username)
+
+        res.json(note_data)
+        
     } catch (error) {
         console.log(error)
+        res.json({
+            massage: 'there is error in scrolling note get data'
+        })
     }
     
 }
 
 
 
+
+// controller for updating the note
+
+const update_note_cntrl = async (req, res) => {
+
+    const note_id = req.body.note_id
+
+    const updated_title = req.body.title
+
+    const updated_subject = req.body.subject;
+
+    const updated_content = req.body.note_main_contant
+
+    try {
+
+        await S_notes_fnc.update_note(note_id, updated_title, updated_subject, updated_content)
+
+        res.status(200).json({
+            success: true
+        })
+
+    } catch (error) {
+
+
+        console.log(error)
+    }
+
+}
+
+
+
+
+// controller for getting one note data in db
+
+const one_note_data_cntrl = async (req, res) => {
+
+    const note_id = req.query.note_id
+
+    console.log(note_id)
+
+    try {
+
+        const note_data = await S_notes_fnc.get_one_note(note_id)
+
+        console.log(note_data)
+
+        res.status(200).json(note_data)
+
+    } catch (error) {
+        console.log(error)
+        res.json({
+            massage: 'cant get one note data'
+        })
+    }
+
+}
+
+
+
 module.exports = {
     get_notes_data_cntrl,
-    update_note
+    update_note_cntrl,
+    one_note_data_cntrl,
+    get_scrolling_note_data_cntrl
 }
