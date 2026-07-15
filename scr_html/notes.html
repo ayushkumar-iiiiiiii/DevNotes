@@ -4,13 +4,20 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>DevNotes</title>
+    <title id="dom_title">DevNotes</title>
+    <link rel="icon" type="image/x-icon" href="./../images/favicon.ico">
 </head>
 
 <body>
     <div id="top_nav_bar" style="grid-area: top_nav_bar;">
 
-        <input type="text" id="search">
+        <div id="search-container">
+            <input type="text" id="search-input" placeholder="Search notes...">
+
+            <button id="clear-search" aria-label="Clear search">
+                &times;
+            </button>
+        </div>
         <button id="new_note_btn">New note</button>
         <button id="notification_icon_btn"></button>
         <button id="user_profile_btn"></button>
@@ -19,16 +26,14 @@
 
     <div id="side_nav_bar" style="grid-area: side_nav_bar;">
 
-        
+
 
         <!-- <div id="side_nav_bar_content"> -->
-            <h1 id="logo_name">DevNotes</h1>
-            <button id="all_notes_btn" class="side_nav_bar_content">All Notes</button>
-            <button id="pinned" class="side_nav_bar_content">pinned</button>
-            <button id="favorites" class="side_nav_bar_content">fev</button>
-            <button id="archive" class="side_nav_bar_content">archive</button>
-            <button id="trash" class="side_nav_bar_content">trash</button>
-            <button id="logout_btn">Logout</button>
+        <h1 id="logo_name">DevNotes</h1>
+        <button id="all_notes_btn" class="side_nav_bar_content">All Notes</button>
+        <button id="archive" class="side_nav_bar_content">archive</button>
+        <button id="trash" class="side_nav_bar_content">trash</button>
+        <button id="logout_btn">Logout</button>
         <!-- </div> -->
 
 
@@ -38,37 +43,47 @@
 
         <div id="main_contant" style="grid-area: main_contant;">
 
-        <div id="notes">
+            <div id="notes">
 
-            <div id="all_notes">
+                <div id="all_notes">
+
+                </div>
 
             </div>
 
         </div>
 
-        <div id="tell_the_page_is_end"></div>
+        <div id="note_editor">
+
+
+            <div id="note_editor_header">
+                <input type="text" id="seacrh_in_notes" placeholder="find the word">
+                <button id="savebtn">save</button>
+                <button id="editor_opitions">⋮</button>
+                <button id="close_editor">X</button>
+            </div>
+
+            <div id="note_inputs">
+                <textarea name="note_main_containt" class="note_editor_main_containt" id="title" placeholder="Title "
+                    rows="1"></textarea>
+                <textarea name="note_main_containt" class="note_editor_main_containt" id="subject"
+                    placeholder="subject"></textarea>
+                <textarea name="note_main_containt" class="note_editor_main_containt"
+                    id="notes_main_contant"></textarea>
+            </div>
+
+        </div>
 
     </div>
 
-    <div id="note_editor">
-
-
-        <div id="note_editor_header">
-            <input type="text" id="seacrh_in_notes" placeholder="find the word">
-            <button id="savebtn">save</button>
-            <button id="editor_opitions">⋮</button>
-            <button id="close_editor">X</button>
-        </div>
-
-        <div id="note_inputs">
-            <textarea name="note_main_containt" class="note_editor_main_containt" id="title" placeholder="Title "
-            rows="1"></textarea>
-            <textarea name="note_main_containt" class="note_editor_main_containt" id="subject" placeholder="subject "></textarea>
-            <textarea name="note_main_containt" class="note_editor_main_containt" id="notes_main_contant"></textarea>
-        </div>
-
-    </div>
-
+    <div id="note_menu">
+        <button id="close_note_menu">x</button>
+        <button id="delete_note" class="note_menu_btn">Delete note</button>
+        <button id="add_tag" class="note_menu_btn">Add tag</button>
+        <button id="pin_note" class="note_menu_btn">Pin note</button>
+        <button id="fav_note" class="note_menu_btn">Fav</button>
+        <button id="archive_note" class="note_menu_btn">Archive Note</button>
+        <button id="trash_note" class="note_menu_btn">Trash</button>
     </div>
 
     <script type="module" src="./../scr/scr_js/notes.js"></script>

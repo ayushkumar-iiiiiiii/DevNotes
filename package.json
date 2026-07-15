@@ -14,9 +14,10 @@
     "validator": "^13.15.35"
   },
   "scripts": {
-    "server": "nodemon ./server/app.js",
-    "build": "vite build"
-  },
+    "dev": "nodemon ./server/app.js",
+    "build": "vite build",
+    "start": "node ./server/app.js"
+},
   "devDependencies": {
     "concurrently": "^10.0.3",
     "vite": "^8.0.11"

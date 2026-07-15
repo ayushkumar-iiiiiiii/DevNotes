@@ -12,6 +12,16 @@ const gettingStarted_btn = document.getElementById('getstarted')
 
 const learnMore_btn = document.getElementById('learnmore')
 
+const about_btn = document.getElementById('aboutBtn')
+
+const privacy_btn = document.getElementById('privacyBtn')
+
+const terms_btn = document.getElementById('tremBtn')
+
+const contact_btn = document.getElementById('contactBtn')
+
+const github_btn = document.getElementById('githubBtn')
+
 
 
 
@@ -48,6 +58,51 @@ gettingStarted_btn.addEventListener('click', () => {
 
 learnMore_btn.addEventListener('click', () => {
 
-    window.location.href = '/learnmore'
+    window.open('/learnmore' , '_blank')
+
+})
+
+
+// event listner for about page
+
+about_btn.addEventListener('click', () => {
+
+    window.open('/about', '_blank') 
+
+})
+
+
+// event listner for contact page
+
+contact_btn.addEventListener('click', () => {
+
+    window.open('/contact', '_blank')
+
+})
+
+
+// event listner for privacy page
+
+privacy_btn.addEventListener('click', () => {
+
+    window.open('/privacy', '_blank')
+
+})
+
+
+// event listner for terms
+
+terms_btn.addEventListener('click', () => {
+
+    window.open('/terms', '_blank')
+
+})
+
+
+// event listner for github repo
+
+github_btn.addEventListener('click', () => {
+
+    window.open('https://github.com/ayushkumar-iiiiiiii/DevNotes', '_blank')
 
 })

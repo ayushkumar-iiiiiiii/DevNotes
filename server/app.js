@@ -2,7 +2,7 @@ const express = require("express");
 const app = express();
 const path = require('path');
 const cookieParser = require('cookie-parser');
-
+require('dotenv').config();
 const auth_router = require("./routes/auth_routes")
 const send_file_router = require('./routes/send_files_routs')
 const notes_router = require("./routes/notes_router")
@@ -39,9 +39,11 @@ app.use(express.static(
 
 
 
+const port = process.env.PORT
 
-app.listen('3000', '0.0.0.0', ()=> {
-    console.log(`server running of port 3000`)
+
+app.listen( port, () => {
+    console.log(`server running of port ${port}`)
 })
 
 

@@ -31,8 +31,28 @@ router.get('/login',
 
 
 router.get('/learnmore', 
-    send_file_controller_functions.send_learnmore_page)
+    send_file_controller_functions.send_learnmore_page
+)
 
+
+router.get('/about', 
+    send_file_controller_functions.send_about_page
+)
+
+
+router.get('/terms', 
+    send_file_controller_functions.send_terms_page
+)
+
+
+router.get('/contact', 
+    send_file_controller_functions.send_contact_page
+)
+
+
+router.get('/privacy', 
+    send_file_controller_functions.send_privacy_page
+)
 
 router.get('',
     send_file_middleware.check_token_middleware,

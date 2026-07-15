@@ -9,22 +9,106 @@ const note_editor = document.getElementById("note_editor");
 const close_editor = document.getElementById("close_editor");
 const save_btn = document.getElementById("savebtn");
 const main_contant_container = document.getElementById("main_content_container")
-const tell_the_page_is_end = document.getElementById("tell_the_page_is_end")
 const logout_btn = document.getElementById("logout_btn")
-// const editor_title_input = document.getElementById("title");
-// const editor_subject_inputs = document.getElementById("subject");
-// const editor_content_input = document.getElementById("notes_main_contant");
+const new_note_btn = document.getElementById("new_note_btn")
+const note_menu = document.getElementById("note_menu")
+const note_menu_close_btn = document.getElementById("close_note_menu")
+const delete_note_btn = document.getElementById("delete_note")
+const dom_title = document.getElementById("dom_title")
+const all_notes_btn = document.getElementById("all_notes_btn")
+const archive_note_btn = document.getElementById("archive")
+const trash_note_btn = document.getElementById("trash")
+const move_to_trash_btn = document.getElementById("trash_note")
+const move_to_pinned_note_btn = document.getElementById("pin_note")
+const move_to_fav_note_btn = document.getElementById("fav_note")
+const move_to_archive_note_btn = document.getElementById("archive_note")
+const search_title_input = document.getElementById("search-input")
+const close_search_bar_btn = document.getElementById("clear-search")
+
+
+let opened_note_in_editor_ID = null // it store the data that editor is opeing which note by storing the note id
+
+let opened_note_menu_ID = null  // it store the data that note menu is opend by which note by storing the note id
+
+let current_site_view = 'all'
 
 
 
-let opened_editor_ID = null // it store the data that editor is opeing which note by storing the note id
+
+
+
+
+// logic for haddiling the side nav bar btn
+
+
+
+
+// all note btn event listener
+
+all_notes_btn.addEventListener("click", async () => {
+
+    all_notes_btn.style.backgroundColor = "#bbbbbb"
+
+    current_site_view = 'all'
+
+    all_notes.innerHTML = ""
+
+    await create_pinned_notes()
+
+    await create_all_notes()
+
+})
+
+if (current_site_view = 'all') {
+
+    all_notes_btn.style.backgroundColor = "#afafaf"
+
+    await create_pinned_notes()
+
+    await create_all_notes()
+}
+
+
+
+
+// event listener for pinned note btn
+
+archive_note_btn.addEventListener('click', () => {
+
+    pinned_notes_btn.style.backgroundColor = "#afafaf"
+
+    current_site_view = 'archive'
+
+})
 
 
 
 
 
 
-// function for getting the 25 note data from the server for first time
+
+
+// api for fecthing the pinned note from server 
+
+
+async function get_pinned_note() {
+
+    try {
+
+        const response = await data_api.get('/notes/get_pinned_notes')
+
+        return response.data
+
+    } catch (error) {
+        console.log(error)
+        if (error.status == 401 && error.response.data.massage == "token not found") {
+            console.log('get note error')
+        }
+    }
+
+}
+
+// api for feching the note data from the server for first time
 
 async function get_all_notes() {
     try {
@@ -42,7 +126,7 @@ async function get_all_notes() {
 }
 
 
-// function for getting the 25 notes from server while scrolling
+// api for feching the notes from server while scrolling
 
 async function scrolling_get_notes(last_note_id) {
 
@@ -62,13 +146,13 @@ async function scrolling_get_notes(last_note_id) {
             console.log('get note error')
         }
     }
-    
+
 }
 
 
 
 
-// function for getting one note data from server
+// api for feching one note data from server
 
 async function get_one_note(note_id) {
 
@@ -98,6 +182,107 @@ async function get_one_note(note_id) {
 
 
 
+// api for saving the note in db
+
+async function save_note() {
+
+    const editor = document.getElementById('note_inputs')
+
+    const title_input = editor.querySelector('#title')
+
+    const subject_input = editor.querySelector('#subject')
+
+    const note_main_contant_input = editor.querySelector('#notes_main_contant')
+
+    const title = title_input.value
+
+    const subject = subject_input.value
+
+    const note_main_contant = note_main_contant_input.value
+
+    try {
+
+        const response = await data_api.patch('/notes/save-note', {
+            note_id: null,
+            title: title,
+            subject: subject,
+            note_main_contant: note_main_contant
+        })
+
+    } catch (error) {
+        console.log(error)
+    }
+
+}
+
+
+
+
+// api for setting the attribute to note like is pinned or archive or trash
+
+async function set_note_attri(note_id, attri, status) {
+
+    try {
+
+        const result = await data_api.post('/notes/set_attri',
+            {
+                note_id: note_id,
+                attri: attri,
+                status: status
+            }
+        )
+
+    } catch (error) {
+        console.log('error')
+    }
+
+}
+
+
+
+
+//api for searching the note in db
+
+async function search_title() {
+
+    try {
+
+        const response = await data_api.get('/notes/search', {
+            params: {
+                q: search_title_input.value
+            }
+        })
+
+        return response.data.search_result
+
+    } catch (error) {
+        console.log(error)
+    }
+
+}
+
+
+
+
+
+
+
+// function for debounce
+
+function debounce(fnc, event_listner_target, frequncy) {
+
+    let timeout;
+
+    event_listner_target.addEventListener("input", () => {
+        clearTimeout(timeout);
+        timeout = setTimeout(() => {
+            fnc();
+        }, frequncy)
+    });
+}
+
+
+
 
 // function for deleteing the note from DOM
 
@@ -106,32 +291,38 @@ function deletenote(note_id) {
     const note = document.getElementById(note_id)
 
     note.remove()
+
 }
 
 
 
 
-// way to create all notes 
+//way to create pinned note
 
-
-async function create_all_notes() {
-
-    all_notes.innerHTML = ""
+async function create_pinned_notes() {
 
     const all_notes_fragment = document.createDocumentFragment();
 
-    const notes = await get_all_notes()
+    const notes = await get_pinned_note()
 
     console.log(notes)
 
     notes.forEach((element) => {
         const note_div = document.createElement("div")
+        const note_actions = document.createElement("div")
+        const pinIcon = document.createElement("span")
+        const favIcon = document.createElement("span")
+        const note_menu_btn = document.createElement("button")
         const tag_container = document.createElement("div")
         const subject = document.createElement("h6")
         const title = document.createElement("h4")
         const content = document.createElement("p")
         const date = document.createElement("p")
 
+        note_menu_btn.className = "note_menu_btn";
+        note_actions.className = "note_actions";
+        pinIcon.className = "pin_icon"
+        favIcon.className = "fav_icon"
         tag_container.className = "tag_container"
         note_div.className = "notes"
         note_div.id = element.note_id
@@ -152,14 +343,20 @@ async function create_all_notes() {
         })
 
 
-
+        favIcon.textContent = "❤️"
+        pinIcon.textContent = "📌"
+        note_menu_btn.textContent = "⋮"
         title.textContent = element.title
         content.textContent = element.content
         subject.textContent = element.subject
         date.textContent = element.created_date
 
+        favIcon.style.display = element.favorite ? "inline-flex" : "none"
 
-        note_div.append(title, subject, content, tag_container, date);
+        note_actions.append(pinIcon, favIcon, note_menu_btn)
+
+
+        note_div.append(note_actions, title, subject, content, tag_container, date);
         all_notes_fragment.appendChild(note_div)
 
         note_div.addEventListener("click", () => {
@@ -167,13 +364,123 @@ async function create_all_notes() {
             note_editor.style.display = "flex"
         })
 
+        note_menu_btn.addEventListener("click", (e) => {
+
+            e.stopPropagation();
+
+            opened_note_menu_ID = event.target.closest(".notes").id
+
+            console.log(opened_note_menu_ID)
+
+            const button = e.target;
+
+            note_menu.style.display = "flex"
+
+            const rect = button.getBoundingClientRect();
+
+            note_menu.style.left = rect.left - 150 + "px";
+            note_menu.style.top = rect.bottom + "px";
+
+        });
+
     });
 
     all_notes.appendChild(all_notes_fragment);
 
 }
 
-create_all_notes()
+
+// way to create all notes 
+
+
+async function create_all_notes() {
+
+    const all_notes_fragment = document.createDocumentFragment();
+
+    const notes = await get_all_notes()
+
+    console.log(notes)
+
+    notes.forEach((element) => {
+        const note_div = document.createElement("div")
+        const note_actions = document.createElement("div")
+        const pinIcon = document.createElement("span")
+        const favIcon = document.createElement("span")
+        const note_menu_btn = document.createElement("button")
+        const tag_container = document.createElement("div")
+        const subject = document.createElement("h6")
+        const title = document.createElement("h4")
+        const content = document.createElement("p")
+        const date = document.createElement("p")
+
+        note_menu_btn.className = "note_menu_btn";
+        note_actions.className = "note_actions";
+        pinIcon.className = "pin_icon"
+        favIcon.className = "fav_icon"
+        tag_container.className = "tag_container"
+        note_div.className = "notes"
+        note_div.id = element.note_id
+        subject.className = "notes_subject"
+        content.className = "notes_content"
+        title.className = "notes_title"
+
+        element.tags.forEach((element_of_tags) => {
+
+            const tags = document.createElement("span")
+
+            tags.className = "notes_tags"
+
+            tags.textContent = element_of_tags;
+
+            tag_container.append(tags);
+
+        })
+
+
+        favIcon.textContent = "❤️"
+        note_menu_btn.textContent = "⋮"
+        title.textContent = element.title
+        content.textContent = element.content
+        subject.textContent = element.subject
+        date.textContent = element.created_date
+
+        favIcon.style.display = element.favorite ? "inline-flex" : "none"
+
+        note_actions.append(pinIcon, favIcon, note_menu_btn)
+
+
+        note_div.append(note_actions, title, subject, content, tag_container, date);
+        all_notes_fragment.appendChild(note_div)
+
+        note_div.addEventListener("click", () => {
+            main_contant.style.display = "none"
+            note_editor.style.display = "flex"
+        })
+
+        note_menu_btn.addEventListener("click", (e) => {
+
+            e.stopPropagation();
+
+            opened_note_menu_ID = event.target.closest(".notes").id
+
+            console.log(opened_note_menu_ID)
+
+            const button = e.target;
+
+            note_menu.style.display = "flex"
+
+            const rect = button.getBoundingClientRect();
+
+            note_menu.style.left = rect.left - 150 + "px";
+            note_menu.style.top = rect.bottom + "px";
+
+        });
+
+    });
+
+    all_notes.appendChild(all_notes_fragment);
+
+}
 
 
 
@@ -191,12 +498,20 @@ async function create_all_notes_scrolling(last_note_element_id) {
 
     notes.forEach((element) => {
         const note_div = document.createElement("div")
+        const note_actions = document.createElement("div")
+        const pinIcon = document.createElement("span")
+        const favIcon = document.createElement("span")
+        const note_menu_btn = document.createElement("button")
         const tag_container = document.createElement("div")
         const subject = document.createElement("h6")
         const title = document.createElement("h4")
         const content = document.createElement("p")
         const date = document.createElement("p")
 
+        note_menu_btn.className = "note_menu_btn";
+        note_actions.className = "note_actions";
+        pinIcon.className = "pin_icon"
+        favIcon.className = "fav_icon"
         tag_container.className = "tag_container"
         note_div.className = "notes"
         note_div.id = element.note_id
@@ -218,19 +533,46 @@ async function create_all_notes_scrolling(last_note_element_id) {
 
 
 
+        favIcon.textContent = "❤️"
+        note_menu_btn.textContent = "⋮"
         title.textContent = element.title
         content.textContent = element.content
         subject.textContent = element.subject
         date.textContent = element.created_date
 
 
-        note_div.append(title, subject, content, tag_container, date);
+        favIcon.style.display = element.favorite ? "inline-flex" : "none"
+
+        note_actions.append(pinIcon, favIcon, note_menu_btn)
+
+
+
+        note_div.append(note_actions, title, subject, content, tag_container, date);
         all_notes_fragment.appendChild(note_div)
 
         note_div.addEventListener("click", () => {
             main_contant.style.display = "none"
             note_editor.style.display = "flex"
         })
+
+        note_menu_btn.addEventListener("click", (e) => {
+
+            e.stopPropagation();
+
+            opened_note_menu_ID = event.target.closest(".notes").id
+
+            console.log(opened_note_menu_ID)
+
+            const button = e.target;
+
+            note_menu.style.display = "flex"
+
+            const rect = button.getBoundingClientRect();
+
+            note_menu.style.left = rect.left - 150 + "px";
+            note_menu.style.top = rect.bottom + "px";
+
+        });
 
     });
 
@@ -257,12 +599,21 @@ async function create_one_note(note_id) {
 
         note_data.forEach((element) => {
             const note_div = document.createElement("div")
+            const note_actions = document.createElement("div")
+            const pinIcon = document.createElement("span")
+            const favIcon = document.createElement("span")
+            const note_menu_btn = document.createElement("button")
             const tag_container = document.createElement("div")
             const subject = document.createElement("h6")
             const title = document.createElement("h4")
             const content = document.createElement("p")
             const date = document.createElement("p")
 
+
+            note_menu_btn.className = "note_menu_btn";
+            note_actions.className = "note_actions";
+            pinIcon.className = "pin_icon"
+            favIcon.className = "fav_icon"
             tag_container.className = "tag_container"
             note_div.className = "notes"
             note_div.id = note_id
@@ -284,19 +635,44 @@ async function create_one_note(note_id) {
 
 
 
+            favIcon.textContent = "❤️"
+            note_menu_btn.textContent = "⋮"
             title.textContent = element.title
             content.textContent = element.content
             subject.textContent = element.subject
             date.textContent = element.created_date
 
+            favIcon.style.display = element.favorite ? "inline-flex" : "none"
 
-            note_div.append(title, subject, content, tag_container, date);
+            note_actions.append(pinIcon, favIcon, note_menu_btn)
+
+
+            note_div.append(note_actions, title, subject, content, tag_container, date);
             all_notes.prepend(note_div)
 
             note_div.addEventListener("click", () => {
                 main_contant.style.display = "none"
                 note_editor.style.display = "flex"
             })
+
+            note_menu_btn.addEventListener("click", (e) => {
+
+                e.stopPropagation();
+
+                opened_note_menu_ID = event.target.closest(".notes").id
+
+                console.log(opened_note_menu_ID)
+
+                const button = e.target;
+
+                note_menu.style.display = "flex"
+
+                const rect = button.getBoundingClientRect();
+
+                note_menu.style.left = rect.left - 150 + "px";
+                note_menu.style.top = rect.bottom + "px";
+
+            });
 
         });
 
@@ -368,6 +744,8 @@ function fill_editor(note_id) {
 
     note_main_contant.value = note.querySelector('.notes_content').textContent
 
+    dom_title.textContent = note.querySelector('.notes_title').textContent
+
 }
 
 
@@ -408,11 +786,14 @@ async function update_note(note_id) {
 let loading = false;
 
 main_contant_container.addEventListener("scroll", async () => {
+    
+    if(current_site_view !== 'all') return
+
     if (loading) return;
 
     const shouldLoad =
         main_contant_container.scrollTop +
-            main_contant_container.clientHeight >=
+        main_contant_container.clientHeight >=
         main_contant_container.scrollHeight - 200;
 
     if (!shouldLoad) return;
@@ -423,7 +804,9 @@ main_contant_container.addEventListener("scroll", async () => {
         const lastNoteId = all_notes.lastElementChild.id;
 
         console.log(lastNoteId)
-        await create_all_notes_scrolling(lastNoteId);
+
+            await create_all_notes_scrolling(lastNoteId);
+
     } finally {
         loading = false;
     }
@@ -441,11 +824,11 @@ async function logout() {
     try {
 
         const response = await data_api.delete('/logout/logout')
-        
+
     } catch (error) {
         console.log(error)
     }
-    
+
 }
 
 logout_btn.addEventListener('click', logout)
@@ -464,7 +847,7 @@ all_notes.addEventListener("click", (event) => {
 
     const clicked_note_id = note.id;
 
-    opened_editor_ID = note.id
+    opened_note_in_editor_ID = note.id
 
     fill_editor(clicked_note_id)
 
@@ -473,14 +856,57 @@ all_notes.addEventListener("click", (event) => {
 
 
 
+// open editor for creating new note
+
+new_note_btn.addEventListener('click', () => {
+
+    const editor = document.getElementById('note_inputs')
+
+    const title = editor.querySelector('#title')
+
+    const subject = editor.querySelector('#subject')
+
+    const note_main_contant = editor.querySelector('#notes_main_contant')
+
+    title.value = ''
+
+    subject.value = ''
+
+    note_main_contant.value = ''
+
+    main_contant.style.display = "none"
+    note_editor.style.display = "flex"
+
+})
+
+
+
+
+
 // closing the editor
 
 
 close_editor.addEventListener("click", async () => {
-    main_contant.style.display = "grid"
-    note_editor.style.display = "none"
-    await create_one_note(opened_editor_ID)
-    opened_editor_ID = null
+
+    if (!opened_note_in_editor_ID) {
+
+        main_contant.style.display = "grid"
+        note_editor.style.display = "none"
+        console.log('do you want to save the note')
+        opened_note_in_editor_ID = null
+
+    }
+
+    if (opened_note_in_editor_ID) {
+
+        main_contant.style.display = "grid"
+        note_editor.style.display = "none"
+        dom_title.textContent = "DevNotes"
+        await create_one_note(opened_note_in_editor_ID)
+        opened_note_in_editor_ID = null
+
+    }
+
 })
 
 
@@ -501,9 +927,246 @@ close_editor.addEventListener("click", change_url_as_normal)
 
 //saving the edited note in db
 
-save_btn.addEventListener("click", () => {
-    update_note(opened_editor_ID)
+save_btn.addEventListener("click", async () => {
+
+    if (opened_note_in_editor_ID !== null) {
+
+        await update_note(opened_note_in_editor_ID)
+
+    }
+
+    if (opened_note_in_editor_ID == null) {
+
+        console.log('saving a new note')
+
+        await save_note()
+
+    }
+
 })
+
+
+// button of closing the opend note menu
+
+note_menu_close_btn.addEventListener('click', () => {
+    note_menu.style.display = "none"
+    opened_note_menu_ID = null
+})
+
+
+// delete button event listner
+
+delete_note_btn.addEventListener('click', async () => {
+
+    try {
+
+        const response = await data_api.delete(`/notes/delete-note/${opened_note_menu_ID}`)
+
+        if (response.data.massage == 'success') {
+
+            deletenote(opened_note_menu_ID)
+
+            note_menu.style.display = "none"
+            opened_note_menu_ID = null
+
+        }
+
+    } catch (error) {
+
+    }
+
+})
+
+
+
+// set trash note btn event listener
+
+move_to_trash_btn.addEventListener('click', async () => {
+
+    try {
+
+        await set_note_attri(opened_note_menu_ID, 'trash', true) // the convection is to set a attri 'attri_name' + 'attri_status' attri status can be true or false
+
+    } catch (error) {
+        console.log(error)
+    }
+
+})
+
+
+// set archive note btn event listener
+
+move_to_archive_note_btn.addEventListener('click', async () => {
+
+    try {
+
+        await set_note_attri(opened_note_menu_ID, 'archive', true)
+
+    } catch (error) {
+        console.log(error)
+    }
+
+})
+
+
+// set fav note btn event listener
+
+move_to_fav_note_btn.addEventListener('click', async () => {
+
+    try {
+
+        await set_note_attri(opened_note_menu_ID, 'fav', true)
+
+    } catch (error) {
+        console.log(error)
+    }
+
+})
+
+
+// set pinned note btn event listener
+
+move_to_pinned_note_btn.addEventListener('click', async () => {
+
+    try {
+
+        await set_note_attri(opened_note_menu_ID, 'pinned', true)
+
+    } catch (error) {
+        console.log(error)
+    }
+
+})
+
+
+
+
+// doing the search in server using the help of debounce function
+
+debounce(create_searched_note, search_title_input, 3000)
+
+
+
+// event listner logic for the close search bar button
+
+
+close_search_bar_btn.addEventListener('click', async () => {
+
+    all_notes.innerHTML = ""
+
+    search_title_input.value = ''
+
+    current_site_view = 'all'
+
+    all_notes_btn.style.backgroundColor = "#afafaf"
+
+    await create_pinned_notes()
+
+    await create_all_notes()
+
+    console.log('close_search_bar_btn is working')
+
+})
+
+
+
+// handling the search bar and create note card on each recived data
+
+async function create_searched_note() {
+
+    current_site_view = 'search_mode'
+
+    const search_note_data = await search_title()
+
+    all_notes.innerHTML = ""
+
+    const all_notes_fragment = document.createDocumentFragment();
+
+    console.log(search_note_data)
+
+    search_note_data.forEach((element) => {
+        const note_div = document.createElement("div")
+        const note_actions = document.createElement("div")
+        const pinIcon = document.createElement("span")
+        const favIcon = document.createElement("span")
+        const note_menu_btn = document.createElement("button")
+        const tag_container = document.createElement("div")
+        const subject = document.createElement("h6")
+        const title = document.createElement("h4")
+        const content = document.createElement("p")
+        const date = document.createElement("p")
+
+        note_menu_btn.className = "note_menu_btn";
+        note_actions.className = "note_actions";
+        pinIcon.className = "pin_icon"
+        favIcon.className = "fav_icon"
+        tag_container.className = "tag_container"
+        note_div.className = "notes"
+        note_div.id = element.note_id
+        subject.className = "notes_subject"
+        content.className = "notes_content"
+        title.className = "notes_title"
+
+        element.tags.forEach((element_of_tags) => {
+
+            const tags = document.createElement("span")
+
+            tags.className = "notes_tags"
+
+            tags.textContent = element_of_tags;
+
+            tag_container.append(tags);
+
+        })
+
+
+        favIcon.textContent = "❤️"
+        note_menu_btn.textContent = "⋮"
+        title.textContent = element.title
+        content.textContent = element.content
+        subject.textContent = element.subject
+        date.textContent = element.created_date
+
+        favIcon.style.display = element.favorite ? "inline-flex" : "none"
+
+        note_actions.append(pinIcon, favIcon, note_menu_btn)
+
+
+        note_div.append(note_actions, title, subject, content, tag_container, date);
+        all_notes_fragment.appendChild(note_div)
+
+        note_div.addEventListener("click", () => {
+            main_contant.style.display = "none"
+            note_editor.style.display = "flex"
+        })
+
+        note_menu_btn.addEventListener("click", (e) => {
+
+            e.stopPropagation();
+
+            opened_note_menu_ID = event.target.closest(".notes").id
+
+            console.log(opened_note_menu_ID)
+
+            const button = e.target;
+
+            note_menu.style.display = "flex"
+
+            const rect = button.getBoundingClientRect();
+
+            note_menu.style.left = rect.left - 150 + "px";
+            note_menu.style.top = rect.bottom + "px";
+
+        });
+
+    });
+
+    all_notes.appendChild(all_notes_fragment);
+
+}
+
+
+
 
 
 

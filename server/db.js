@@ -176,6 +176,8 @@ async function get_user_uuid(username) {
 
         let user_id = result.rows[0].user_id;
 
+        console.log(user_id)
+
         return user_id;
 
     } catch (error) {
@@ -300,17 +302,17 @@ async function delete_r_token_indb(R_token_hash) {
             [R_token_hash]
         )
 
-        if(result.rowCount === 1){
-           return true 
-        } else{
+        if (result.rowCount === 1) {
+            return true
+        } else {
             return false
         }
-        
+
     } catch (error) {
         console.log(error)
         return false
     }
-    
+
 }
 
 
@@ -337,7 +339,7 @@ async function get_notes_indb(user_id, last_update_time, note_id) {
 
         try {
 
-            const result = await pool.query("SELECT note_id, content, title, subject, tags, TO_CHAR(created_at, 'DD/MM/YY') AS created_date, TO_CHAR(created_at, 'HH24:MI') AS created_time FROM notes WHERE user_id = $1 ORDER BY updated_at DESC LIMIT 40",
+            const result = await pool.query("SELECT note_id, content, title, subject, tags, TO_CHAR(created_at, 'DD/MM/YY') AS created_date, TO_CHAR(created_at, 'HH24:MI') AS created_time, favorite FROM notes WHERE user_id = $1 AND pinned = 'false' ORDER BY updated_at DESC LIMIT 40",
                 [user_id]
             )
 
@@ -356,11 +358,11 @@ async function get_notes_indb(user_id, last_update_time, note_id) {
 
         try {
 
-            const result = await pool.query("SELECT note_id, content, title, subject, tags, TO_CHAR(created_at, 'DD/MM/YY') AS created_date, TO_CHAR(created_at, 'HH24:MI') AS created_time FROM notes WHERE user_id = $1 AND (updated_at, note_id) < ($2, $3) ORDER BY updated_at DESC LIMIT 40",
+            const result = await pool.query("SELECT note_id, content, title, subject, tags, TO_CHAR(created_at, 'DD/MM/YY') AS created_date, TO_CHAR(created_at, 'HH24:MI') AS created_time, favorite FROM notes WHERE user_id = $1 AND pinned = 'false' AND(updated_at, note_id) < ($2, $3) ORDER BY updated_at DESC LIMIT 40",
                 [user_id, last_update_time, note_id]
             )
 
-            console.log(result.rows)
+            //console.log(result.rows)
 
             return result.rows
 
@@ -368,6 +370,26 @@ async function get_notes_indb(user_id, last_update_time, note_id) {
             console.log(error)
         }
 
+    }
+
+}
+
+
+
+// function for getting the pinned note in db
+
+async function get_pinned_notes_indb(user_id) {
+
+    try {
+
+        const result = await pool.query("SELECT note_id, content, title, subject, tags, TO_CHAR(created_at, 'DD/MM/YY') AS created_date, TO_CHAR(created_at, 'HH24:MI') AS created_time, favorite FROM notes WHERE user_id = $1 AND pinned = 'true' ORDER BY updated_at DESC LIMIT 40",
+            [user_id]
+        )
+
+        return result.rows
+
+    } catch (error) {
+        console.log(error)
     }
 
 }
@@ -382,13 +404,33 @@ async function get_timestamp_by_note_id(note_id) {
         const result = await pool.query("SELECT updated_at FROM notes WHERE note_id = $1",
             [note_id]
         )
-        
+
         return result.rows[0].updated_at
 
     } catch (error) {
         console.log(error)
     }
-    
+
+}
+
+
+
+
+
+// function for saving a new note in db
+
+async function save_note_indb(user_id, title, subject, note_main_contant) {
+
+    try {
+
+        const result = pool.query("INSERT INTO notes (user_id, title, subject, content) VALUES ($1, $2, $3, $4)",
+            [user_id, title, subject, note_main_contant]
+        )
+
+    } catch (error) {
+        console.log(error)
+    }
+
 }
 
 
@@ -415,22 +457,172 @@ async function update_note_indb(note_id, title, subject, note_main_contant) {
 
 
 
+
+// function for deleting the note
+
+async function delete_note_indb(note_id) {
+
+    try {
+
+        const result = await pool.query("DELETE FROM notes WHERE note_id = $1",
+            [note_id]
+        )
+
+        if (result.rowCount = 1) {
+
+            return true
+
+        } else {
+            return false
+        }
+
+    } catch (error) {
+
+    }
+
+}
+
+
+// funtion for making the note to trash 
+
+async function set_trash_indb(note_id, trash_status) {
+
+    try {
+
+        const result = pool.query("UPDATE notes SET trashed = $1  WHERE note_id = $2",
+            [trash_status, note_id]
+        )
+
+        if (result.rowCount = 1) {
+
+            return true
+
+        } else {
+            return false
+        }
+
+    } catch (error) {
+        console.log(error)
+    }
+
+}
+
+
+// function for making note to archive
+
+async function set_archive_indb(note_id, archive_status) {
+
+    try {
+
+        const result = pool.query("UPDATE notes SET archived = $1  WHERE note_id = $2",
+            [archive_status, note_id]
+        )
+
+        if (result.rowCount = 1) {
+
+            return true
+
+        } else {
+            return false
+        }
+
+    } catch (error) {
+        console.log(error)
+    }
+
+}
+
+
+// function for making note to pinned
+
+async function set_pinned_indb(note_id, pinned_status) {
+
+    try {
+
+        const result = pool.query("UPDATE notes SET pinned = $1  WHERE note_id = $2",
+            [pinned_status, note_id]
+        )
+
+        if (result.rowCount = 1) {
+
+            return true
+
+        } else {
+            return false
+        }
+
+    } catch (error) {
+        console.log(error)
+    }
+
+}
+
+
+// function for making note to fav
+
+async function set_fav_indb(note_id, fav_status) {
+
+    try {
+
+        const result = pool.query("UPDATE notes SET favorite = $1  WHERE note_id = $2",
+            [fav_status, note_id]
+        )
+
+        if (result.rowCount = 1) {
+
+            return true
+
+        } else {
+            return false
+        }
+
+    } catch (error) {
+        console.log(error)
+    }
+
+}
+
+
+
 // function for getting only one note
 
 async function get_one_note_indb(note_id) {
 
     try {
 
-        const result = await pool.query("SELECT content, title, subject, tags, TO_CHAR(created_at, 'DD/MM/YY') AS created_date, TO_CHAR(created_at, 'HH24:MI') AS created_time FROM notes WHERE note_id = $1",
+        const result = await pool.query("SELECT content, title, subject, tags, TO_CHAR(created_at, 'DD/MM/YY') AS created_date, TO_CHAR(created_at, 'HH24:MI') AS created_time, favorite FROM notes WHERE note_id = $1",
             [note_id]
         )
 
         return result.rows
-        
+
     } catch (error) {
         console.log(error)
     }
-    
+
+}
+
+
+
+
+
+
+// logic for searching the by title
+
+async function search_note_by_title_indb(user_id, query_string) {
+
+    try {
+
+        const result = await pool.query("SELECT note_id, content, title, subject, tags, TO_CHAR(created_at, 'DD/MM/YY') AS created_date, TO_CHAR(created_at, 'HH24:MI') AS created_time, favorite, ts_rank(title_search, to_tsquery('english', $2)) AS rank FROM notes WHERE user_id = $1 AND title_search @@to_tsquery('english', $2) ORDER BY rank DESC LIMIT 20",
+            [user_id, query_string]
+        )
+
+        return result.rows
+
+    } catch (error) {
+        console.log(error)
+    }
+
 }
 
 
@@ -452,5 +644,13 @@ module.exports = {
     get_email_by_username,
     get_one_note_indb,
     get_timestamp_by_note_id,
-    delete_r_token_indb
+    delete_r_token_indb,
+    save_note_indb,
+    delete_note_indb,
+    set_trash_indb,
+    set_archive_indb,
+    set_pinned_indb,
+    set_fav_indb,
+    get_pinned_notes_indb,
+    search_note_by_title_indb
 }

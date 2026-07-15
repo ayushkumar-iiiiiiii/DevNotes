@@ -49,11 +49,35 @@ const send_learnmore_page = async (req, res) => {
 }
 
 
+const send_about_page = async (req, res) => {
+    res.sendFile(path.join(__dirname, '..', '..', 'Static', 'scr_html' ,'about.html'))
+}
+
+
+const send_contact_page = async (req, res) => {
+    res.sendFile(path.join(__dirname, '..', '..', 'Static', 'scr_html' ,'contact.html'))
+}
+
+
+const send_privacy_page = async (req, res) => {
+    res.sendFile(path.join(__dirname, '..', '..', 'Static', 'scr_html' ,'privacy.html'))
+}
+
+
+const send_terms_page = async (req, res) => {
+    res.sendFile(path.join(__dirname, '..', '..', 'Static', 'scr_html' ,'terms.html'))
+}
+
+
 module.exports = {
     send_signup_page,
     // send_scr_files,
     send_home_page,
     send_login_page,
     // send_notes_page,
-    send_learnmore_page
+    send_learnmore_page,
+    send_about_page,
+    send_contact_page,
+    send_privacy_page,
+    send_terms_page
 }
