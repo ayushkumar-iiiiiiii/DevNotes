@@ -1,279 +1,338 @@
 # DevNotes
 
-A full-stack note-taking and knowledge management application built to deeply understand backend architecture, authentication systems, database design, and scalable web application development.
+A full-stack note-taking application built with **Node.js**, **Express**, **PostgreSQL**, and **Vanilla JavaScript**.
 
-This project is not intended to be a perfect production-ready application from day one.  
-Its primary goal is learning through building, debugging, optimization, experimentation, and developer feedback.
+DevNotes is designed to provide a clean and fast note-taking experience while serving as a long-term project for exploring backend engineering, authentication, database design, deployment, and scalable web application architecture.
 
----
-
-# Project Philosophy
-
-Instead of heavily relying on tutorials or abstractions, this project focuses on understanding how things work internally:
-
-- Authentication flow
-- JWT handling
-- Cookies and sessions
-- PostgreSQL database structure
-- API architecture
-- Input validation
-- Frontend/backend communication
-- Performance optimization
-- Security considerations
-- Scalable project organization
-
-A large part of this project is intentionally being built manually to better understand the fundamentals of full-stack development.
+> ⚠️ This project is actively under development. New features, security improvements, and architectural changes are continuously being added.
 
 ---
 
-# Current Features
+# Live Demo
+
+🌐 **Application:** https://devnotes-xx8h.onrender.com/
+
+---
+
+# Screenshots
+
+> *(Add screenshots after Version 1 is complete.)*
+
+- Landing Page
+- Dashboard
+- Note Editor
+- Search
+- Authentication
+
+---
+
+# Features
 
 ## Authentication
-- User signup
-- User login
-- JWT token generation
-- Cookie-based authentication
-- Protected route preparation
-- Password hashing using bcrypt
 
-## Validation System
+- User registration
+- User login
+- Password hashing using bcrypt
+- JWT authentication
+- HTTP-only cookie authentication
+- Refresh token rotation
+- Protected API routes
+
+---
+
+## Notes
+
+- Create notes
+- Edit notes
+- Delete notes
+- View notes
+- Responsive notes dashboard
+- Infinite scrolling
+- Automatic pagination
+
+---
+
+## Search
+
+- Real-time search
+- Title search
+- Content search
+- Backend-powered filtering
+
+---
+
+## Validation
+
 - Email validation
 - Username validation
-- Password strength validation
+- Password validation
 - Phone number validation
-- Debounced frontend validation requests
-- Duplicate user checking through PostgreSQL
+- Debounced validation requests
+- Duplicate account detection
+
+---
 
 ## Backend
-- Express.js server
-- REST-style API routes
-- PostgreSQL integration
-- Environment variable configuration
-- Cookie parsing middleware
 
-## Frontend
-- Vanilla JavaScript frontend
-- Dynamic validation feedback
-- Debounced API calls
-- Form validation logic
-- Basic responsive UI structure
+- REST API
+- Express middleware
+- PostgreSQL integration
+- Environment-based configuration
+- Modular route structure
 
 ---
 
 # Tech Stack
 
 ## Frontend
-- HTML
-- CSS
+
+- HTML5
+- CSS3
 - Vanilla JavaScript
+- Axios
+- Vite
 
 ## Backend
+
 - Node.js
 - Express.js
 
 ## Database
-- PostgreSQL
 
-## Authentication & Security
+- PostgreSQL
+- Neon
+
+## Authentication
+
 - JWT
 - bcrypt
 - cookie-parser
 
-## Tooling
-- Webpack
-- dotenv
+## Deployment
+
+- Render
+- GitHub
 
 ---
 
-# Folder Structure
+# Architecture
 
-```bash
-DevNotes/
-│
-├── Public/
-│   ├── bundle.js
-│   ├── index.html
-│   ├── login.html
-│   ├── signup.html
-│   └── style.css
-│
-├── src/
-│   ├── index.js
-│   └── signup-login.js
-│
-├── server.js
-├── webpack.config.js
-├── package.json
-└── .gitignore
+```
+Browser
+    │
+    ▼
+Express Server
+    │
+    ├── Authentication
+    ├── Validation
+    ├── Notes API
+    └── Static Files
+            │
+            ▼
+      PostgreSQL (Neon)
 ```
 
 ---
 
-# Learning Goals
+# Project Goals
 
-This project exists mainly to improve my understanding of:
+Rather than relying heavily on frontend frameworks or large backend abstractions, this project focuses on understanding how modern web applications work internally.
 
-- Backend architecture
-- Database optimization
+Areas explored include:
+
 - Authentication systems
-- Secure API design
-- HTTP fundamentals
-- PostgreSQL relationships
-- Full-stack debugging
-- Application scalability
-- Project organization
-- Clean code structure
-
----
-
-# Planned Features
-
-## Notes System
-- Create notes
-- Edit notes
-- Delete notes
-- View individual notes
-- View all notes
-
-## Organization
-- Tags
-- Categories/Folders
-- Filtering system
-
-## Search
-- Search by title
-- Search by content
-- Advanced filtering
-
-## Dashboard
-- Grid-based notes UI
-- Card previews
-- List/grid toggle
-
-## Advanced Features
-- Real-time updates
+- JWT lifecycle
+- Cookie-based security
+- REST API design
+- PostgreSQL database design
+- Deployment workflows
 - Performance optimization
-- Caching
-- Security improvements
-- Pagination
-- Favorites system
-- Archive system
+- Error handling
+- Production debugging
+- Scalable project organization
 
 ---
 
-# Current Technical Debt / Known Issues
+# Challenges Solved
 
-This project is still under active development and intentionally experimental in some areas.
+During development this project has gone through multiple architectural improvements.
 
-Known areas that need improvement:
+Some of the major challenges solved include:
 
-- Better authentication middleware
-- Improved cookie security settings
-- More scalable backend structure
-- Better frontend modularization
-- Cleaner validation architecture
-- Improved error handling
-- Route protection system
-- Better state management
-- Rate limiting
-- CSRF protection
-- Refresh token system
-
----
-
-# Feedback & Criticism Welcome
-
-One of the primary goals of this project is learning through real developer feedback.
-
-I highly encourage criticism and suggestions regarding:
-
-- Backend architecture
-- Security flaws
-- Authentication flow
-- Database design
-- Validation logic
-- API structure
-- Naming conventions
-- Code quality
-- Scalability concerns
-- Optimization opportunities
-
-If you notice bad practices or beginner mistakes, please point them out openly.  
-That feedback is extremely valuable for improving both the project and my understanding of software engineering.
+- Migrating from Webpack to Vite
+- Deploying a full-stack Node.js application to Render
+- Migrating PostgreSQL from local development to Neon
+- Managing environment variables across development and production
+- Implementing JWT authentication with HTTP-only cookies
+- Implementing refresh token rotation
+- Infinite scrolling with backend pagination
+- Production debugging using Render logs
+- Linux deployment issues (case-sensitive file paths)
+- API routing and deployment troubleshooting
 
 ---
 
-# Why Vanilla JavaScript?
+# Project Structure
 
-This project intentionally uses Vanilla JavaScript for many core features before moving into larger frontend frameworks.
-
-The goal is to first understand:
-- DOM manipulation
-- Event handling
-- HTTP requests
-- Application flow
-- State handling
-- Frontend architecture fundamentals
-
-before abstracting those concepts through frameworks.
+```
+DevNotes/
+│
+├── server/
+│   ├── controllers/
+│   ├── middleware/
+│   ├── routes/
+│   ├── db.js
+│   ├── dbconfig.js
+│   └── app.js
+│
+├── scr/
+│
+├── scr_html/
+│
+├── Static/
+│
+├── vite.config.js
+├── package.json
+└── README.md
+```
 
 ---
 
-# Setup Instructions
+# Running Locally
 
-## Clone Repository
+## Clone the repository
 
 ```bash
-git clone <your-repository-url>
+git clone https://github.com/<username>/DevNotes.git
+
 cd DevNotes
 ```
 
-## Install Dependencies
+---
+
+## Install dependencies
 
 ```bash
 npm install
 ```
 
+---
+
 ## Environment Variables
 
-Create a `.env` file:
+Create a `.env` file in the project root.
 
 ```env
-JWT_SECRET=your_secret_key
+JWT_SECRET=your_secret
+
+DATABASE_URL=your_postgresql_connection
+
+PORT=3000
+
+VITE_API_URL=http://localhost:3000/api
 ```
 
-## Start Server
+---
+
+## Start Development
+
+Backend
 
 ```bash
-node server.js
+npm run dev
+```
+
+Build frontend
+
+```bash
+npm run build
 ```
 
 ---
 
-# Future Direction
+# Deployment
 
-This project will continue evolving into a more complete knowledge management system while maintaining focus on learning backend engineering principles and scalable architecture.
+This application is deployed using:
 
-Future improvements may include:
-- TypeScript migration
-- Better project structure
-- Docker support
-- Testing infrastructure
-- CI/CD pipelines
-- Better deployment workflow
-- Advanced PostgreSQL optimization
-- Realtime collaboration
+- **Frontend:** Express Static Files
+- **Backend:** Render
+- **Database:** Neon PostgreSQL
+
+Deployment includes:
+
+- Production environment variables
+- HTTPS
+- Cloud PostgreSQL
+- Automatic GitHub deployments
 
 ---
 
-# Disclaimer
+# Roadmap
 
-This project is currently a learning-focused application and should not yet be considered production-ready.
+### Version 1
 
-Security, scalability, and architecture are continuously being improved as I learn more throughout the development process.
+- [x] Authentication
+- [x] PostgreSQL integration
+- [x] Cloud deployment
+- [x] Search
+- [x] Infinite scrolling
+- [ ] UI polish
+- [ ] Better error pages
+- [ ] Password visibility toggle
+- [ ] Mobile improvements
+
+### Future Versions
+
+- React frontend
+- TypeScript migration
+- Docker support
+- Redis caching
+- Advanced search
+- Rich text editor
+- Markdown support
+- File attachments
+- Testing
+- CI/CD
+- Admin dashboard
+- Collaborative editing
+
+---
+
+# What I Learned
+
+This project has been a practical exploration of:
+
+- Backend architecture
+- Authentication systems
+- PostgreSQL
+- Deployment
+- Debugging production applications
+- Environment configuration
+- API design
+- Performance optimization
+
+More importantly, it demonstrated the differences between software that works locally and software that runs reliably in production.
+
+---
+
+# Contributing
+
+Suggestions, criticism, and improvements are always welcome.
+
+If you notice:
+
+- Security issues
+- Architecture problems
+- Performance bottlenecks
+- Better design patterns
+- Code quality improvements
+
+please open an issue or submit a pull request.
+
+Constructive feedback is greatly appreciated.
 
 ---
 
 # License
 
-Open for learning, experimentation, and feedback.
+This project is open for learning, experimentation, and personal use.
