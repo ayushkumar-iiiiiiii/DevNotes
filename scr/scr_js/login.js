@@ -1,5 +1,5 @@
 
-//import isEmail from "validator/lib/isEmail";
+
 import {data_api, page_api} from "./apis.js"
 import "./../scr_css/login.css"
 
@@ -18,8 +18,6 @@ async function login_user(){
     let password = password_input.value;
 
     console.log(`login user fnc is started ${email_or_username}`)
-
-    //if(isEmail(email_or_username)){
 
         try {
 
@@ -40,27 +38,6 @@ async function login_user(){
             console.log(error);
         }
 
-//     } else {
-
-//         try {
-
-//             let response = await api.post("/login/login",{
-//                 username: email_or_username,
-//                 password: password
-//             });
-
-//             let auth = response.data.auth;
-            
-//             if (auth === "correct_pass") {
-//               window.location.href = '/'
-//             } else {
-//               Password_feedback.textContent = "Incorrect password"
-//             }
-
-//         } catch (error) {
-//             console.log(error);
-//         }
-//     }
  }
 
 function redirect_signup(){

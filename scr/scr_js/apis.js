@@ -20,8 +20,6 @@ const page_api = axios.create({
 })
 
 
-console.log(import.meta.env.VITE_API_URL, import.meta.env.VITE_FILE_URL)
-
 
 
 // interceptor for checking the error code in responce from the server 

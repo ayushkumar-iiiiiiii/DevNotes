@@ -1,6 +1,7 @@
 
 import isEmail from "validator/lib/isEmail";
-import {data_api, page_api} from "./apis.js"
+import {data_api, page_api} from "./apis.js";
+import "./../scr_css/signup.css"
 
 
 // debounce fnc for showing feedback for email and pass
