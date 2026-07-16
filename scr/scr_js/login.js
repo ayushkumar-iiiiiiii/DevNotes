@@ -28,7 +28,7 @@ async function login_user(){
 
            let login_status = response.data.login_status;
             
-           if (login_status === "correct_pass") {
+           if (login_status === "true") {
              window.location.href = '/'
            } else {
             Password_feedback.textContent = "Incorrect password"
