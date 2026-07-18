@@ -9,9 +9,11 @@ const get_notes_data_cntrl = async (req, res) => {
 
     try {
 
+        const get_note_query = req.query.note
+
         const username = req.user.username
 
-        const notes_data = await S_notes_fnc.get_notes_data(username)
+        const notes_data = await S_notes_fnc.get_notes_data(username, get_note_query)
 
         console.log(username)
 

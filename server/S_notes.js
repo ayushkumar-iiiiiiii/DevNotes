@@ -3,16 +3,43 @@ const db_fnc = require('./db')
 
 //function for getting the notes data from db
 
-async function get_notes_data(username) {
+async function get_notes_data(username, get_note_query) {
 
-    const user_id = await db_fnc.get_user_uuid(username)
+    if (get_note_query == 'all') {
 
-    const notes_content = await db_fnc.get_notes_indb(user_id)
+        const user_id = await db_fnc.get_user_uuid(username)
 
-    console.log("get_notes_data")
+        const notes_content = await db_fnc.get_notes_indb(user_id)
 
-    return notes_content;
+        console.log("getting all note data")
 
+        return notes_content;
+
+    }
+
+    if (get_note_query == 'archive') {
+
+        console.log('getting archive note')
+
+        const user_id = await db_fnc.get_user_uuid(username)
+
+        const notes_content = await db_fnc.get_archive_note_indb(user_id)
+
+        return notes_content;
+
+    }
+
+    if (get_note_query == 'trash') {
+
+        console.log('getting trash note')
+
+        const user_id = await db_fnc.get_user_uuid(username)
+
+        const notes_content = await db_fnc.get_trash_note_indb(user_id)
+
+        return notes_content;
+
+    }
 }
 
 
@@ -176,7 +203,7 @@ async function search_title(searchable_string, username) {
     const search_result = await db_fnc.search_note_by_title_indb(user_id, title_query)
 
     return search_result
-    
+
 }
 
 

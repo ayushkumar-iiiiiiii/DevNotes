@@ -49,35 +49,69 @@ all_notes_btn.addEventListener("click", async () => {
 
     all_notes_btn.style.backgroundColor = "#bbbbbb"
 
+    archive_note_btn.style.backgroundColor = "#ffffff"
+
+    trash_note_btn.style.backgroundColor = "#ffffff"
+
     current_site_view = 'all'
 
     all_notes.innerHTML = ""
 
     await create_pinned_notes()
 
-    await create_all_notes()
+    await create_all_notes(current_site_view)
 
 })
 
 if (current_site_view = 'all') {
 
-    all_notes_btn.style.backgroundColor = "#afafaf"
+    all_notes_btn.style.backgroundColor = "#bbbbbb"
 
     await create_pinned_notes()
 
-    await create_all_notes()
+    await create_all_notes(current_site_view)
 }
 
 
 
 
-// event listener for pinned note btn
+// event listner for see archive note btn
 
-archive_note_btn.addEventListener('click', () => {
+archive_note_btn.addEventListener('click', async () => {
 
-    pinned_notes_btn.style.backgroundColor = "#afafaf"
+    archive_note_btn.style.backgroundColor = "#bbbbbb"
+
+    all_notes_btn.style.backgroundColor = "#ffffff"
+
+    trash_note_btn.style.backgroundColor = "#ffffff"
+
+    all_notes.innerHTML = ""
 
     current_site_view = 'archive'
+
+    await create_all_notes(current_site_view)
+
+
+})
+
+
+
+// event listner for see trash note btn
+
+
+trash_note_btn.addEventListener('click', async () => {
+
+    archive_note_btn.style.backgroundColor = "#ffffff"
+
+    all_notes_btn.style.backgroundColor = "#ffffff"
+
+    trash_note_btn.style.backgroundColor = "#bbbbbb"
+
+    all_notes.innerHTML = ""
+
+    current_site_view = 'trash'
+
+    await create_all_notes(current_site_view)
 
 })
 
@@ -110,10 +144,15 @@ async function get_pinned_note() {
 
 // api for feching the note data from the server for first time
 
-async function get_all_notes() {
+async function get_all_notes(get_note_query) {
     try {
 
-        const response = await data_api.get('/notes/get_notes')
+        const response = await data_api.get('/notes/get_notes',{
+            params: {
+                note: get_note_query
+            }
+        }
+        )
 
         return response.data
 
@@ -393,11 +432,11 @@ async function create_pinned_notes() {
 // way to create all notes 
 
 
-async function create_all_notes() {
+async function create_all_notes(get_note_query) {
 
     const all_notes_fragment = document.createDocumentFragment();
 
-    const notes = await get_all_notes()
+    const notes = await get_all_notes(get_note_query)
 
     console.log(notes)
 

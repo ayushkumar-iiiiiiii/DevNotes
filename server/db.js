@@ -376,6 +376,47 @@ async function get_notes_indb(user_id, last_update_time, note_id) {
 
 
 
+// function for getting the archive note in db
+
+
+async function get_archive_note_indb(user_id) {
+
+    try {
+
+        const result = await pool.query("SELECT note_id, content, title, subject, tags, TO_CHAR(created_at, 'DD/MM/YY') AS created_date, TO_CHAR(created_at, 'HH24:MI') AS created_time, favorite FROM notes WHERE user_id = $1 AND pinned = 'false' AND archived = 'true' ORDER BY updated_at DESC LIMIT 40",
+            [user_id]
+        )
+
+        return result.rows
+
+    } catch (error) {
+        console.log(error)
+    }
+
+}
+
+
+
+// getting trash note in db
+
+async function get_trash_note_indb(user_id) {
+
+    try {
+
+        const result = await pool.query("SELECT note_id, content, title, subject, tags, TO_CHAR(created_at, 'DD/MM/YY') AS created_date, TO_CHAR(created_at, 'HH24:MI') AS created_time, favorite FROM notes WHERE user_id = $1 AND pinned = 'false' AND trashed = 'true' ORDER BY updated_at DESC LIMIT 40",
+            [user_id]
+        )
+
+        return result.rows
+
+    } catch (error) {
+        console.log(error)
+    }
+    
+}
+
+
+
 // function for getting the pinned note in db
 
 async function get_pinned_notes_indb(user_id) {
@@ -639,6 +680,8 @@ module.exports = {
     get_pass_hash_by_username,
     rotate_Rtoken_indb,
     get_notes_indb,
+    get_archive_note_indb,
+    get_trash_note_indb,
     update_note_indb,
     get_username_by_email,
     get_email_by_username,

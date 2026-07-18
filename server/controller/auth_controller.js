@@ -273,11 +273,11 @@ const rotate_Rtoken_cntl = async (req, res) => {
 
 const logout_user_cntl = async (req, res) => {
 
+    console.log('logout contrl is being called')
+
     const R_token = req.cookies.refresh_token
 
     const logout_status = await auth_functions.logout_user_fnc(R_token)
-
-    console.log(logout_status)
 
     if (logout_status) {
 
@@ -291,7 +291,7 @@ const logout_user_cntl = async (req, res) => {
 
     } else {
         res.json({
-            logout_status: "true"
+            logout_status: "false"
         })
     }
 
