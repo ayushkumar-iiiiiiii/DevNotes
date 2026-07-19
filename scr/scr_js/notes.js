@@ -26,6 +26,7 @@ const search_title_input = document.getElementById("search-input")
 const close_search_bar_btn = document.getElementById("clear-search")
 
 
+
 let opened_note_in_editor_ID = null // it store the data that editor is opeing which note by storing the note id
 
 let opened_note_menu_ID = null  // it store the data that note menu is opend by which note by storing the note id
@@ -147,7 +148,7 @@ async function get_pinned_note() {
 async function get_all_notes(get_note_query) {
     try {
 
-        const response = await data_api.get('/notes/get_notes',{
+        const response = await data_api.get('/notes/get_notes', {
             params: {
                 note: get_note_query
             }
@@ -420,6 +421,8 @@ async function create_pinned_notes() {
             note_menu.style.left = rect.left - 150 + "px";
             note_menu.style.top = rect.bottom + "px";
 
+            main_contant_container.style.overflowY = "hidden"
+
         });
 
     });
@@ -512,6 +515,8 @@ async function create_all_notes(get_note_query) {
 
             note_menu.style.left = rect.left - 150 + "px";
             note_menu.style.top = rect.bottom + "px";
+
+            main_contant_container.style.overflowY = "hidden"
 
         });
 
@@ -610,6 +615,8 @@ async function create_all_notes_scrolling(last_note_element_id) {
 
             note_menu.style.left = rect.left - 150 + "px";
             note_menu.style.top = rect.bottom + "px";
+
+            main_contant_container.style.overflowY = "hidden"
 
         });
 
@@ -825,8 +832,8 @@ async function update_note(note_id) {
 let loading = false;
 
 main_contant_container.addEventListener("scroll", async () => {
-    
-    if(current_site_view !== 'all') return
+
+    if (current_site_view !== 'all') return
 
     if (loading) return;
 
@@ -844,7 +851,7 @@ main_contant_container.addEventListener("scroll", async () => {
 
         console.log(lastNoteId)
 
-            await create_all_notes_scrolling(lastNoteId);
+        await create_all_notes_scrolling(lastNoteId);
 
     } finally {
         loading = false;
@@ -988,7 +995,11 @@ save_btn.addEventListener("click", async () => {
 // button of closing the opend note menu
 
 note_menu_close_btn.addEventListener('click', () => {
+
     note_menu.style.display = "none"
+
+    main_contant_container.style.overflowY = "scroll"
+
     opened_note_menu_ID = null
 })
 
