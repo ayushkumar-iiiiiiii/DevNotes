@@ -339,7 +339,7 @@ async function get_notes_indb(user_id, last_update_time, note_id) {
 
         try {
 
-            const result = await pool.query("SELECT note_id, content, title, subject, tags, TO_CHAR(created_at, 'DD/MM/YY') AS created_date, TO_CHAR(created_at, 'HH24:MI') AS created_time, favorite FROM notes WHERE user_id = $1 AND pinned = 'false' ORDER BY updated_at DESC LIMIT 40",
+            const result = await pool.query("SELECT note_id, content, title, subject, tags, TO_CHAR(created_at, 'DD/MM/YY') AS created_date, TO_CHAR(created_at, 'HH24:MI') AS created_time, favorite, archived, trashed FROM notes WHERE user_id = $1 AND pinned = 'false' ORDER BY updated_at DESC LIMIT 40",
                 [user_id]
             )
 
@@ -631,7 +631,7 @@ async function get_one_note_indb(note_id) {
 
     try {
 
-        const result = await pool.query("SELECT content, title, subject, tags, TO_CHAR(created_at, 'DD/MM/YY') AS created_date, TO_CHAR(created_at, 'HH24:MI') AS created_time, favorite FROM notes WHERE note_id = $1",
+        const result = await pool.query("SELECT content, title, subject, tags, TO_CHAR(created_at, 'DD/MM/YY') AS created_date, TO_CHAR(created_at, 'HH24:MI') AS created_time, favorite, pinned, archived, trashed FROM notes WHERE note_id = $1",
             [note_id]
         )
 
