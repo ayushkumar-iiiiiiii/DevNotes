@@ -404,13 +404,19 @@ async function create_pinned_notes() {
             note_editor.style.display = "flex"
         })
 
-        note_menu_btn.addEventListener("click", (e) => {
+        note_menu_btn.addEventListener("click", async (e) => {
 
             e.stopPropagation();
 
             opened_note_menu_ID = event.target.closest(".notes").id
 
-            console.log(opened_note_menu_ID)
+            const note = notes.find(note => note.note_id === opened_note_menu_ID)
+
+            const is_fav = note.favorite
+            const is_archive = note.archived
+            const is_trash = note.trashed
+
+            await handile_note_menu(true, is_fav, is_archive, is_trash)
 
             const button = e.target;
 
@@ -499,13 +505,20 @@ async function create_all_notes(get_note_query) {
             note_editor.style.display = "flex"
         })
 
-        note_menu_btn.addEventListener("click", (e) => {
+        note_menu_btn.addEventListener("click", async (e) => {
 
             e.stopPropagation();
 
             opened_note_menu_ID = event.target.closest(".notes").id
 
-            console.log(opened_note_menu_ID)
+            const note = notes.find(note => note.note_id === opened_note_menu_ID)
+
+            const is_fav = note.favorite
+            const is_archive = note.archived
+            const is_trash = note.trashed
+
+            await handile_note_menu(null, is_fav, is_archive, is_trash)
+
 
             const button = e.target;
 
@@ -599,13 +612,19 @@ async function create_all_notes_scrolling(last_note_element_id) {
             note_editor.style.display = "flex"
         })
 
-        note_menu_btn.addEventListener("click", (e) => {
+        note_menu_btn.addEventListener("click", async (e) => {
 
             e.stopPropagation();
 
             opened_note_menu_ID = event.target.closest(".notes").id
 
-            console.log(opened_note_menu_ID)
+            const note = notes.find(note => note.note_id === opened_note_menu_ID)
+
+            const is_fav = note.favorite
+            const is_archive = note.archived
+            const is_trash = note.trashed
+
+            await handile_note_menu(null, is_fav, is_archive, is_trash)
 
             const button = e.target;
 
@@ -701,13 +720,20 @@ async function create_one_note(note_id) {
                 note_editor.style.display = "flex"
             })
 
-            note_menu_btn.addEventListener("click", (e) => {
+            note_menu_btn.addEventListener("click", async (e) => {
 
                 e.stopPropagation();
 
                 opened_note_menu_ID = event.target.closest(".notes").id
 
-                console.log(opened_note_menu_ID)
+                const note = notes.find(note => note.note_id === opened_note_menu_ID)
+
+                const is_fav = note.favorite
+                const is_archive = note.archived
+                const is_trash = note.trashed
+                const is_pinned = note.pinned
+
+                await handile_note_menu(is_pinned, is_fav, is_archive, is_trash)
 
                 const button = e.target;
 
@@ -726,6 +752,20 @@ async function create_one_note(note_id) {
     } catch (error) {
         console.log(error)
     }
+
+}
+
+
+
+
+// handle the open note menu
+
+function handile_note_menu(is_pinned, is_fav, is_archive, is_trash) {
+
+    move_to_pinned_note_btn.textContent = is_pinned ? "Unpin note" : "Pin note"
+    move_to_fav_note_btn.textContent = is_fav ? "Remove from favorites" : "Add to favorites"
+    move_to_archive_note_btn.textContent = is_archive ? "Restore from archive" : "Archive note"
+    move_to_trash_btn.textContent = is_trash ? "Restore note" : "Move to trash"
 
 }
 
@@ -1033,9 +1073,11 @@ delete_note_btn.addEventListener('click', async () => {
 
 move_to_trash_btn.addEventListener('click', async () => {
 
+    const status = move_to_trash_btn.textContent === "Move to trash" ? true : false
+
     try {
 
-        await set_note_attri(opened_note_menu_ID, 'trash', true) // the convection is to set a attri 'attri_name' + 'attri_status' attri status can be true or false
+        await set_note_attri(opened_note_menu_ID, 'trash', status) // the convection is to set a attri 'attri_name' + 'attri_status' attri status can be true or false
 
     } catch (error) {
         console.log(error)
@@ -1048,9 +1090,11 @@ move_to_trash_btn.addEventListener('click', async () => {
 
 move_to_archive_note_btn.addEventListener('click', async () => {
 
+    const status = move_to_archive_note_btn.textContent === "Archive note" ? true : false
+
     try {
 
-        await set_note_attri(opened_note_menu_ID, 'archive', true)
+        await set_note_attri(opened_note_menu_ID, 'archive', status)
 
     } catch (error) {
         console.log(error)
@@ -1063,9 +1107,11 @@ move_to_archive_note_btn.addEventListener('click', async () => {
 
 move_to_fav_note_btn.addEventListener('click', async () => {
 
+    const status = move_to_fav_note_btn.textContent === "Add to favorites" ? true : false
+
     try {
 
-        await set_note_attri(opened_note_menu_ID, 'fav', true)
+        await set_note_attri(opened_note_menu_ID, 'fav', status)
 
     } catch (error) {
         console.log(error)
@@ -1078,9 +1124,11 @@ move_to_fav_note_btn.addEventListener('click', async () => {
 
 move_to_pinned_note_btn.addEventListener('click', async () => {
 
+    const status = move_to_fav_note_btn.textContent === "Pin note" ? true : false
+
     try {
 
-        await set_note_attri(opened_note_menu_ID, 'pinned', true)
+        await set_note_attri(opened_note_menu_ID, 'pinned', status)
 
     } catch (error) {
         console.log(error)
