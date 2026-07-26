@@ -267,6 +267,63 @@ const set_note_attri_cntrl = async (req, res) => {
 
 
 
+// controller for adding the tags
+
+const add_tag_cntrl = async (req, res) => {
+
+    const note_id = req.body.note_id
+    const tag_name = req.body.tag_name
+
+    const add_tag_status = await S_notes_fnc.add_tag(note_id, tag_name)
+
+    if (add_tag_status) {
+
+        res.json({
+            massage: 'success'
+        })
+        
+    } else {
+
+        res.json({
+            massage: 'fail'
+        })
+
+    }
+    
+}
+
+
+
+
+
+// controller for the deleting the tags
+
+
+const delete_note_tags_cntrl = async (req, res) => {
+
+    const note_id = req.params.note_id
+    const tag_name = req.params.tag_name
+
+    const delete_tag_status = await S_notes_fnc.delete_tag(note_id, tag_name)
+
+    if (delete_tag_status) {
+
+        res.json({
+            massage: 'success'
+        })
+        
+    } else {
+
+        res.json({
+            massage: 'fail'
+        })
+
+    }
+
+} 
+
+
+
 
 // controller for handling the title search
 
@@ -292,5 +349,7 @@ module.exports = {
     delete_note_cntrl,
     set_note_attri_cntrl,
     get_pinned_notes_data_cntrl,
-    title_search_cntrl
+    title_search_cntrl,
+    add_tag_cntrl,
+    delete_note_tags_cntrl
 }

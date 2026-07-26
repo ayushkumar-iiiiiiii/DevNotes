@@ -24,6 +24,14 @@ const move_to_fav_note_btn = document.getElementById("fav_note")
 const move_to_archive_note_btn = document.getElementById("archive_note")
 const search_title_input = document.getElementById("search-input")
 const close_search_bar_btn = document.getElementById("clear-search")
+const add_tag_container = document.getElementById("add_tag_container")
+const close_add_tag_container_btn = document.getElementById("close_add_tag_container")
+const add_tag_input = document.getElementById("add_tag_input")
+const add_tag_btn = document.getElementById("add_tag_btn")
+const add_tag_note_menu_btn = document.getElementById("add_tag")
+const remove_tag_note_menu_btn = document.getElementById("remove_tag")
+const remove_tag_container = document.getElementById("remove_tag_container")
+
 
 
 
@@ -38,8 +46,15 @@ let current_site_view = 'all'
 
 
 
+// this is for creating html elemnt and use them globlely 
 
-// logic for haddiling the side nav bar btn
+const remove_tag_header = document.createElement('h3')
+remove_tag_header.textContent = 'Remove Tags'
+
+const remove_tag_container_close_btn = document.createElement('button')
+remove_tag_container_close_btn.textContent = '✕'
+remove_tag_container_close_btn.id = 'close_remove_tag_container'
+
 
 
 
@@ -304,6 +319,44 @@ async function search_title() {
 
 
 
+// api for the adding the tags
+
+async function add_tag_api(note_id, tag_name) {
+
+    try {
+
+        const response = await data_api.patch('/notes/add-tag', {
+            note_id: note_id,
+            tag_name: tag_name
+        })
+
+        return response.data.massage
+
+    } catch (error) {
+        console.log(error)
+    }
+
+}
+
+
+
+
+
+// api for removing the tags in db
+
+async function remove_tag_api(tag_name, note_id) {
+
+    try {
+
+        const response = await data_api.delete(`/notes/delete-tags/${note_id}/${tag_name}`)
+
+        return response.data.massage
+
+    } catch (error) {
+        console.log(error)
+    }
+
+}
 
 
 
@@ -333,6 +386,52 @@ function deletenote(note_id) {
     note.remove()
 
 }
+
+
+
+// function for filling the text content for remove tag spans
+
+function fill_remove_tag_span() {
+
+    const note = document.getElementById(opened_note_menu_ID)
+
+    const tags = note.querySelectorAll('.notes_tags')
+
+    const remove_tag_span = document.querySelectorAll('.remove_tag_name')
+
+    remove_tag_span[0].textContent = tags[0].textContent
+    remove_tag_span[1].textContent = tags[1].textContent
+    remove_tag_span[2].textContent = tags[2].textContent
+
+}
+
+
+
+
+// function for handiling remove tags btn
+
+
+function handle_remove_tags_btn() {
+
+    const note = document.getElementById(opened_note_menu_ID)
+
+    const tags = note.querySelectorAll('.notes_tags')
+
+    const remove_tag_btn = document.querySelectorAll('.remove_tag_btn')
+
+    remove_tag_btn.forEach((btn, index) => {
+
+        btn.addEventListener('click', () => {
+
+            console.log(tags[index])
+
+        })
+
+    })
+
+}
+
+
 
 
 
@@ -805,8 +904,6 @@ function change_url_as_normal() {
 }
 
 
-// function for checking the url and decide what to give notes list or editor
-
 
 
 
@@ -1266,6 +1363,155 @@ async function create_searched_note() {
 
 
 
+// event listner for add tag note menu btn
+
+add_tag_note_menu_btn.addEventListener('click', (e) => {
+
+    add_tag_input.value = ''
+
+    e.stopPropagation();
+
+    const button = e.target;
+
+    add_tag_container.style.display = 'flex'
+
+    const rect = button.getBoundingClientRect();
+
+    add_tag_container.style.left = rect.left - 150 + "px";
+    add_tag_container.style.top = rect.bottom + "px";
+
+})
+
+
+
+// event listner for the closing the add tag container
+
+
+close_add_tag_container_btn.addEventListener('click', () => {
+
+    add_tag_container.style.display = 'none'
+
+})
+
+
+// event listner for the add tag btn
+
+add_tag_btn.addEventListener('click', async () => {
+
+    const note = document.getElementById(opened_note_menu_ID)
+
+    const tag_name = add_tag_input.value
+
+    const response = await add_tag_api(opened_note_menu_ID, tag_name)
+
+    if (response == 'success') {
+
+        const tag_container = note.querySelector('.tag_container')
+
+        const new_tag = document.createElement("span")
+
+        new_tag.textContent = tag_name
+
+        new_tag.className = 'notes_tags'
+
+        tag_container.append(new_tag)
+
+    } else {
+        // code for showing the error massge
+        // like a notification toast
+    }
+
+})
+
+
+
+
+
+// event listner for the removetag note menu btn 
+
+remove_tag_note_menu_btn.addEventListener('click', (e) => {
+
+    remove_tag_container.innerHTML = ''
+
+    remove_tag_container.append(remove_tag_header, remove_tag_container_close_btn)
+
+
+
+    const note = document.getElementById(opened_note_menu_ID)
+
+    const tags = note.querySelectorAll('.notes_tags')
+
+    if (tags.length === 0) {
+        console.log('add tags first')
+        // error noticetion alert for adding tags first!!
+        return
+    }
+
+    tags.forEach((coloumn) => {
+
+        const remove_tag_coloumn_container = document.createElement('div')
+        const remove_tag_span = document.createElement('span')
+        const remove_tag_coloumn_btn = document.createElement('button')
+
+        remove_tag_coloumn_container.className = 'each_tag_remove_container'
+        remove_tag_span.className = 'remove_tag_name'
+        remove_tag_coloumn_btn.className = 'remove_tag_btn'
+
+        remove_tag_coloumn_btn.textContent = '✕'
+
+        remove_tag_coloumn_btn.addEventListener('click',  async (event) => {
+
+            const parent_container = event.target.parentElement
+
+            const span = parent_container.querySelector('.remove_tag_name')
+
+            const response = await remove_tag_api(span.textContent, opened_note_menu_ID)
+
+            parent_container.remove()
+
+            await create_one_note(opened_note_menu_ID)
+
+        })
+
+        remove_tag_coloumn_container.append(remove_tag_span, remove_tag_coloumn_btn)
+
+        remove_tag_container.append(remove_tag_coloumn_container)
+
+    })
+
+    e.stopPropagation();
+
+    const button = e.target;
+
+    remove_tag_container.style.display = 'flex'
+
+    const rect = button.getBoundingClientRect();
+
+    remove_tag_container.style.left = rect.left - 150 + "px";
+    remove_tag_container.style.top = rect.bottom - 100 + "px";
+
+    handle_remove_tags_btn()
+    fill_remove_tag_span()
+
+})
+
+
+
+
+// event listner for the closing the remove tag container 
+
+
+
+remove_tag_container_close_btn.addEventListener('click', () => {
+
+    remove_tag_container.style.display = 'none'
+
+    const remove_tag_span = document.querySelectorAll('.remove_tag_name')
+
+    remove_tag_span[0].textContent = ''
+    remove_tag_span[1].textContent = ''
+    remove_tag_span[2].textContent = ''
+})
 
 
 

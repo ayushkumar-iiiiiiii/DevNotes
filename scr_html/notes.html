@@ -60,7 +60,7 @@
                 <input type="text" id="seacrh_in_notes" placeholder="find the word">
                 <button id="savebtn">save</button>
                 <button id="editor_opitions">⋮</button>
-                <button id="close_editor">X</button>
+                <button id="close_editor">✕</button>
             </div>
 
             <div id="note_inputs">
@@ -77,13 +77,24 @@
     </div>
 
     <div id="note_menu">
-        <button id="close_note_menu">x</button>
+        <button id="close_note_menu">✕</button>
         <button id="delete_note" class="note_menu_btn">Delete note</button>
         <button id="add_tag" class="note_menu_btn">Add tag</button>
+        <button id="remove_tag" class="note_menu_btn">Remove tag</button>
         <button id="pin_note" class="note_menu_btn"></button>
         <button id="fav_note" class="note_menu_btn"></button>
         <button id="archive_note" class="note_menu_btn"></button>
         <button id="trash_note" class="note_menu_btn"></button>
+    </div>
+
+    <div id="add_tag_container">
+        <button id="close_add_tag_container">✕</button>
+        <input type="text" id="add_tag_input">
+        <button id="add_tag_btn">+</button>
+    </div>
+
+    <div id="remove_tag_container">
+
     </div>
 
     <script type="module" src="./../scr/scr_js/notes.js"></script>
