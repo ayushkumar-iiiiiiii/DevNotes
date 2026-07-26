@@ -28,6 +28,11 @@ router.post('/set_attri', protect_route, notes_cntrl.set_note_attri_cntrl)
 
 router.get('/search',protect_route, notes_cntrl.title_search_cntrl)
 
+router.patch('/add-tag', protect_route, notes_cntrl.add_tag_cntrl)
+
+router.delete('/delete-tags/:note_id/:tag_name', protect_route, notes_cntrl.delete_note_tags_cntrl)
+
+
 //router.get('/:id',  send_file_controller_functions.send_notes_page)
 
 

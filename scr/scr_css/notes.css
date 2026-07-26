@@ -326,10 +326,12 @@
  }
 
  .notes_tags {
-     padding: 4px 10px;
+     margin-right: var(--space-sm);
+     padding: 6px 15px;
      border-radius: 999px;
-     background: #eef2ff;
-     color: var(--text);
+     background: #EEF2FF;
+     color: #4338CA;
+     border: 1px solid #C7D2FE;
      font-size: .75rem;
  }
 
@@ -493,9 +495,15 @@
      transition: background-color 0.15s ease;
  }
 
- .note_menu_btn:hover,
- #close_note_menu:hover {
+ .note_menu_btn:hover {
      background: #f1f5f9;
+ }
+
+ #close_note_menu:hover {
+
+     background: #efefef;
+     color: #ef4444;
+
  }
 
  .note_menu_btn:active,
@@ -526,4 +534,240 @@
 
      font-size: 1rem;
      font-weight: bold;
+ }
+
+
+
+ /* add tag constainer css */
+
+ #add_tag_container {
+     position: fixed;
+
+     display: none;
+     align-items: center;
+     gap: 0.6rem;
+
+     width: 320px;
+     padding: 0.8rem;
+
+     background: var(--background);
+     border: 1px solid var(--border);
+     border-radius: 12px;
+     box-shadow: 0 10px 30px rgba(15, 23, 42, 0.12);
+
+     z-index: 10000;
+ }
+
+ #add_tag_input {
+     flex: 1;
+
+     padding: 0.65rem 0.8rem;
+
+     border: 1px solid var(--border);
+     border-radius: 8px;
+
+     background: var(--surface);
+     color: var(--text);
+
+     font-size: 0.95rem;
+     outline: none;
+
+     transition: border-color 0.2s ease,
+         box-shadow 0.2s ease;
+ }
+
+ #add_tag_input:focus {
+     border-color: var(--primary);
+     box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.15);
+ }
+
+ #add_tag_btn,
+ #close_add_tag_container {
+     width: 38px;
+     height: 38px;
+
+     border: none;
+     border-radius: 8px;
+
+     cursor: pointer;
+
+     font-size: 1rem;
+     font-weight: 600;
+
+     transition: 0.2s ease;
+ }
+
+ #add_tag_btn {
+     background: var(--primary);
+     color: white;
+ }
+
+ #add_tag_btn:hover {
+     background: var(--primary-hover);
+ }
+
+ #close_add_tag_container {
+     background: transparent;
+     color: var(--text-secondary);
+ }
+
+ #close_add_tag_container:hover {
+     background: #efefef;
+     color: #ef4444;
+ }
+
+
+
+
+ /* css for the remove note tag ui*/
+
+
+ #remove_tag_container {
+     position: absolute;
+     top: 100%;
+     right: 0;
+
+     width: 280px;
+     max-height: 320px;
+
+     padding: 18px;
+     margin-top: 10px;
+
+     background: #fff;
+     border: 1px solid #E2E8F0;
+     border-radius: 14px;
+     box-shadow: 0 12px 35px rgba(15, 23, 42, 0.18);
+
+     display: none;
+     flex-direction: column;
+     gap: 12px;
+
+     overflow-y: auto;
+     z-index: 1000;
+
+     /* Needed for the absolute-positioned close button */
+     position: absolute;
+ }
+
+ #close_remove_tag_container {
+     position: absolute;
+     top: 12px;
+     right: 12px;
+
+     width: 32px;
+     height: 32px;
+
+     display: flex;
+     align-items: center;
+     justify-content: center;
+
+     border: none;
+     border-radius: 50%;
+
+     background: transparent;
+     color: #64748B;
+
+     font-size: 22px;
+     font-weight: 600;
+     line-height: 1;
+
+     cursor: pointer;
+     transition: 0.2s ease;
+ }
+
+ #close_remove_tag_container:hover {
+     background: #F1F5F9;
+     color: #EF4444;
+ }
+
+ #close_remove_tag_container:active {
+     transform: scale(0.92);
+ }
+
+ #remove_tag_container h3 {
+     margin: 0 40px 8px 0;
+ }
+
+ #remove_tag_container h3 {
+     margin: 0 0 8px;
+
+     font-size: 1rem;
+     font-weight: 600;
+
+     color: #0F172A;
+ }
+
+ .each_tag_remove_container {
+     display: flex;
+     justify-content: space-between;
+     align-items: center;
+
+     padding: 10px 14px;
+
+     background: #F8FAFC;
+     border: 1px solid #E2E8F0;
+     border-radius: 999px;
+
+     transition: 0.2s ease;
+ }
+
+ .each_tag_remove_container:hover {
+     background: #EEF2FF;
+     border-color: #C7D2FE;
+ }
+
+ .remove_tag_name {
+     color: #4338CA;
+     font-size: 0.9rem;
+     font-weight: 500;
+
+     overflow: hidden;
+     text-overflow: ellipsis;
+     white-space: nowrap;
+ }
+
+ .remove_tag_btn {
+     width: 28px;
+     height: 28px;
+
+     border: none;
+     border-radius: 50%;
+
+     background: transparent;
+     color: #64748B;
+
+     font-size: 18px;
+     font-weight: bold;
+
+     cursor: pointer;
+
+     display: flex;
+     align-items: center;
+     justify-content: center;
+
+     transition: 0.2s;
+ }
+
+ .remove_tag_btn:hover {
+     background: #EF4444;
+     color: white;
+ }
+
+ .remove_tag_btn:active {
+     transform: scale(0.9);
+ }
+
+ /* Scrollbar */
+
+ #remove_tag_container::-webkit-scrollbar {
+     width: 6px;
+ }
+
+ #remove_tag_container::-webkit-scrollbar-thumb {
+     background: #CBD5E1;
+     border-radius: 10px;
+ }
+
+ #remove_tag_container::-webkit-scrollbar-thumb:hover {
+     background: #94A3B8;
  }

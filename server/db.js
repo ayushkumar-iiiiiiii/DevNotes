@@ -412,7 +412,7 @@ async function get_trash_note_indb(user_id) {
     } catch (error) {
         console.log(error)
     }
-    
+
 }
 
 
@@ -509,7 +509,7 @@ async function delete_note_indb(note_id) {
             [note_id]
         )
 
-        if (result.rowCount = 1) {
+        if (result.rowCount == 1) {
 
             return true
 
@@ -534,7 +534,7 @@ async function set_trash_indb(note_id, trash_status) {
             [trash_status, note_id]
         )
 
-        if (result.rowCount = 1) {
+        if (result.rowCount == 1) {
 
             return true
 
@@ -559,7 +559,7 @@ async function set_archive_indb(note_id, archive_status) {
             [archive_status, note_id]
         )
 
-        if (result.rowCount = 1) {
+        if (result.rowCount == 1) {
 
             return true
 
@@ -584,7 +584,7 @@ async function set_pinned_indb(note_id, pinned_status) {
             [pinned_status, note_id]
         )
 
-        if (result.rowCount = 1) {
+        if (result.rowCount == 1) {
 
             return true
 
@@ -609,7 +609,7 @@ async function set_fav_indb(note_id, fav_status) {
             [fav_status, note_id]
         )
 
-        if (result.rowCount = 1) {
+        if (result.rowCount == 1) {
 
             return true
 
@@ -643,6 +643,65 @@ async function get_one_note_indb(note_id) {
 
 }
 
+
+
+
+
+// function for add tags in db
+
+async function add_tag_indb(note_id, tag_name) {
+
+    try {
+
+        const result = await pool.query("UPDATE notes SET tags = array_append(tags, $2) WHERE note_id = $1 AND cardinality(tags) < 3 AND NOT ($2 = ANY(tags))", [note_id, tag_name])
+
+        console.log(result.rowCount)
+
+        if (result.rowCount == 1) {
+
+            return true
+
+        } else {
+            return false
+        }
+
+    } catch (error) {
+        console.log(error)
+    }
+
+}
+
+
+
+
+
+
+// function for deleting the tags in db
+
+
+async function delete_tags_indb(note_id, tag_name) {
+
+    try {
+
+        const result = pool.query("UPDATE notes SET tags = array_remove(tags, $2) WHERE note_id = $1",
+            [note_id, tag_name]
+        )
+
+        console.log(result.rowCount)
+
+        if (result.rowCount == 1) {
+
+            return true
+
+        } else {
+            return false
+        }
+        
+    } catch (error) {
+        console.log(error)
+    }
+    
+}
 
 
 
@@ -695,5 +754,7 @@ module.exports = {
     set_pinned_indb,
     set_fav_indb,
     get_pinned_notes_indb,
-    search_note_by_title_indb
+    search_note_by_title_indb,
+    add_tag_indb,
+    delete_tags_indb
 }

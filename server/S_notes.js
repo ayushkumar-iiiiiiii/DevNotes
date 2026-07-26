@@ -169,6 +169,28 @@ async function fav_note(note_id, fav_status_param) {
 
 
 
+// add the tags
+
+async function add_tag(note_id, tag_name) {
+
+    const add_tag_status = await db_fnc.add_tag_indb(note_id, tag_name)
+
+    return add_tag_status
+    
+}
+
+
+// remove tags
+
+async function delete_tag(note_id, tag_name) {
+
+    const delete_tag_status = await db_fnc.delete_tags_indb(note_id, tag_name)
+
+    return delete_tag_status
+    
+}
+
+
 
 
 // logic for searching the tiltle
@@ -218,5 +240,7 @@ module.exports = {
     fav_note,
     pinned_note,
     get_pinned_notes_data,
-    search_title
+    search_title,
+    add_tag,
+    delete_tag
 }
