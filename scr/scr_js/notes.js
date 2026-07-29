@@ -435,6 +435,40 @@ function handle_remove_tags_btn() {
 
 
 
+// function for handiling the position of the open menu
+
+async function handile_menu_position(rect) {
+
+    const viewport_width = window.innerWidth
+    const viewport_height = window.innerHeight
+
+    const menu = note_menu
+
+    const menu_rect = menu.getBoundingClientRect()
+
+    const menu_width = menu_rect.width
+    const menu_height = menu_rect.height
+
+    // finding the failing case
+
+    // failing in width will never a case
+
+    if (innerHeight < (rect.bottom + menu_height)) {
+
+        const failing_margin = (rect.bottom + menu_height) - innerHeight
+
+        const y_location = rect.bottom - failing_margin
+
+        return y_location
+
+    } else {
+        return rect.bottom
+    }
+    
+}
+
+
+
 
 //way to create pinned note
 
@@ -523,8 +557,10 @@ async function create_pinned_notes() {
 
             const rect = button.getBoundingClientRect();
 
+            const y_location = await handile_menu_position(rect)
+
             note_menu.style.left = rect.left - 150 + "px";
-            note_menu.style.top = rect.bottom + "px";
+            note_menu.style.top = y_location + "px";
 
             main_contant_container.style.overflowY = "hidden"
 
@@ -625,8 +661,10 @@ async function create_all_notes(get_note_query) {
 
             const rect = button.getBoundingClientRect();
 
+            const y_location = await handile_menu_position(rect)
+
             note_menu.style.left = rect.left - 150 + "px";
-            note_menu.style.top = rect.bottom + "px";
+            note_menu.style.top = y_location + "px";
 
             main_contant_container.style.overflowY = "hidden"
 
@@ -730,6 +768,8 @@ async function create_all_notes_scrolling(last_note_element_id) {
             note_menu.style.display = "flex"
 
             const rect = button.getBoundingClientRect();
+
+            await handile_menu_position(rect)
 
             note_menu.style.left = rect.left - 150 + "px";
             note_menu.style.top = rect.bottom + "px";
