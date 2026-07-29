@@ -1216,6 +1216,8 @@ move_to_trash_btn.addEventListener('click', async () => {
 
         await set_note_attri(opened_note_menu_ID, 'trash', status) // the convection is to set a attri 'attri_name' + 'attri_status' attri status can be true or false
 
+        deletenote(opened_note_menu_ID)
+
     } catch (error) {
         console.log(error)
     }
@@ -1232,6 +1234,8 @@ move_to_archive_note_btn.addEventListener('click', async () => {
     try {
 
         await set_note_attri(opened_note_menu_ID, 'archive', status)
+
+        deletenote(opened_note_menu_ID)
 
     } catch (error) {
         console.log(error)
