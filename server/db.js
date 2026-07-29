@@ -339,7 +339,7 @@ async function get_notes_indb(user_id, last_update_time, note_id) {
 
         try {
 
-            const result = await pool.query("SELECT note_id, content, title, subject, tags, TO_CHAR(created_at, 'DD/MM/YY') AS created_date, TO_CHAR(created_at, 'HH24:MI') AS created_time, favorite, archived, trashed FROM notes WHERE user_id = $1 AND pinned = 'false' ORDER BY updated_at DESC LIMIT 40",
+            const result = await pool.query("SELECT note_id, content, title, subject, tags, TO_CHAR(created_at, 'DD/MM/YY') AS created_date, TO_CHAR(created_at, 'HH24:MI') AS created_time, favorite, archived, trashed FROM notes WHERE user_id = $1 AND pinned = 'false' AND trashed = 'false' ORDER BY updated_at DESC LIMIT 40",
                 [user_id]
             )
 
@@ -358,7 +358,7 @@ async function get_notes_indb(user_id, last_update_time, note_id) {
 
         try {
 
-            const result = await pool.query("SELECT note_id, content, title, subject, tags, TO_CHAR(created_at, 'DD/MM/YY') AS created_date, TO_CHAR(created_at, 'HH24:MI') AS created_time, favorite FROM notes WHERE user_id = $1 AND pinned = 'false' AND(updated_at, note_id) < ($2, $3) ORDER BY updated_at DESC LIMIT 40",
+            const result = await pool.query("SELECT note_id, content, title, subject, tags, TO_CHAR(created_at, 'DD/MM/YY') AS created_date, TO_CHAR(created_at, 'HH24:MI') AS created_time, favorite FROM notes WHERE user_id = $1 AND pinned = 'false' AND trashed = 'false' AND (updated_at, note_id) < ($2, $3) ORDER BY updated_at DESC LIMIT 40",
                 [user_id, last_update_time, note_id]
             )
 
@@ -530,7 +530,7 @@ async function set_trash_indb(note_id, trash_status) {
 
     try {
 
-        const result = pool.query("UPDATE notes SET trashed = $1  WHERE note_id = $2",
+        const result = pool.query("UPDATE notes SET trashed = $1, delete_at = NOW() + INTERVAL '30 days' WHERE note_id = $2",
             [trash_status, note_id]
         )
 
@@ -541,6 +541,23 @@ async function set_trash_indb(note_id, trash_status) {
         } else {
             return false
         }
+
+    } catch (error) {
+        console.log(error)
+    }
+
+}
+
+
+
+
+// deleting the trash note after 30 days
+
+async function delete_trash_note_indb(user_id) {
+
+    try {
+
+        const result = await pool.query("DELETE FROM notes WHERE user_id = $1 AND delete_at IS NOT NULL AND delete_at <= NOW();", [user_id])
 
     } catch (error) {
         console.log(error)
@@ -696,11 +713,11 @@ async function delete_tags_indb(note_id, tag_name) {
         } else {
             return false
         }
-        
+
     } catch (error) {
         console.log(error)
     }
-    
+
 }
 
 
@@ -756,5 +773,6 @@ module.exports = {
     get_pinned_notes_indb,
     search_note_by_title_indb,
     add_tag_indb,
-    delete_tags_indb
+    delete_tags_indb,
+    delete_trash_note_indb
 }
