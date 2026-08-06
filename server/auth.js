@@ -6,6 +6,14 @@ const crypto = require("crypto");
 const { create } = require("domain");
 const isEmail = require("validator/lib/isEmail");
 
+const {
+    ValidationError,
+    UnauthorizedError,
+    ForbiddenError,
+    NotFoundError,
+    ConflictError
+} = require("./error");
+
 
 
 
@@ -101,17 +109,17 @@ async function making_user_signup(
 
 ) {
 
-    // hashing the password
+    try {
 
-    let user_pass_hash = await bcrypt.hash(user_pass_unhash, 10)
+        // hashing the password
 
-    if (
+        let user_pass_hash = await bcrypt.hash(user_pass_unhash, 10)
 
-        check_email_availability(user_email) &&
-        check_phone_number_availability(user_phone_no) &&
-        check_username_availability(user_username)
+        const check_phone_no = await db_functions.check_phone_number_indb(user_phone_no)
 
-    ) {
+        if(!check_phone_no){
+            throw new ConflictError('This phone number is already associated with an account. Please use a different phone number.')
+        }
 
         let inserted_cred_status = await db_functions.inserting_cred_indb(
 
@@ -122,30 +130,30 @@ async function making_user_signup(
 
         )
 
-        const refresh_token_storing_service_status = await refresh_token_storing_service(user_username, user_email, device_info)
+        if (inserted_cred_status.inserting_cred_indb_status) {
 
-        // console.log(refresh_token_storing_service_status)
+            const refresh_token_storing_service_status = await refresh_token_storing_service(user_username, user_email, device_info)
 
-        let access_token = refresh_token_storing_service_status.access_token;
-        let refresh_token = refresh_token_storing_service_status.refresh_token;
+            // console.log(refresh_token_storing_service_status)
 
-        // console.log(`refresh token ${refresh_token}
-        // access token ${access_token}`)
+            let access_token = refresh_token_storing_service_status.access_token;
+            let refresh_token = refresh_token_storing_service_status.refresh_token;
 
-        return {
-            access_token: access_token,
-            refresh_token: refresh_token,
-            making_user_signup_status: true
-        };
+            // console.log(`refresh token ${refresh_token}
+            // access token ${access_token}`)
 
-    } else {
+            return {
+                access_token: access_token,
+                refresh_token: refresh_token,
+                making_user_signup_status: true
+            };
 
-        //console.log(`there is some error in check email function or check phone function or check username function`)
+        }
 
-        return {
-            making_user_signup_status: false
-        };
+    } catch (error) {
 
+        throw error
+        
     }
 
 }
@@ -330,8 +338,6 @@ async function making_user_login(email_or_username, password, device_info) {
 
         if (verify_password) {
 
-            console.log('pass is correct')
-
             const refresh_token_storing_service_status = await refresh_token_storing_service(username, email_or_username, device_info)
 
             // console.log(refresh_token_storing_service_status)
@@ -350,11 +356,7 @@ async function making_user_login(email_or_username, password, device_info) {
 
         } else {
 
-            console.log('pass is incorrect')
-
-            return {
-                making_user_login_status: false
-            }
+            throw new UnauthorizedError('Invalid credentials.')
 
         }
 
@@ -371,8 +373,6 @@ async function making_user_login(email_or_username, password, device_info) {
 
         if (verify_password) {
 
-            console.log('pass is correct')
-
             const refresh_token_storing_service_status = await refresh_token_storing_service(email_or_username, email, device_info)
 
             // console.log(refresh_token_storing_service_status)
@@ -382,7 +382,6 @@ async function making_user_login(email_or_username, password, device_info) {
 
             // console.log(`refresh token ${refresh_token}
             // access token ${access_token}`)
-
             return {
                 access_token: access_token,
                 refresh_token: refresh_token,
@@ -391,11 +390,7 @@ async function making_user_login(email_or_username, password, device_info) {
 
         } else {
 
-            console.log('pass is incorrect')
-
-            return {
-                making_user_login_status: false
-            }
+            throw new UnauthorizedError('Invalid credentials.')
 
         }
     }
@@ -489,16 +484,16 @@ async function rotate_Rtoken_fnc(old_Rtoken, username, email) {
 
 // LOGIC FOR LOGOUT
 
-async function logout_user_fnc(R_token){
+async function logout_user_fnc(R_token) {
 
     try {
-    
+
         const R_token_hash = await creat_refresh_token_hash(R_token).refresh_token_hash
 
         const delete_r_token_status = await db_functions.delete_r_token_indb(R_token_hash)
 
         return delete_r_token_status
-        
+
     } catch (error) {
         console.log(error)
     }

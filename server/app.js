@@ -6,6 +6,7 @@ require('dotenv').config();
 const auth_router = require("./routes/auth_routes")
 const send_file_router = require('./routes/send_files_routs')
 const notes_router = require("./routes/notes_router")
+const { errorHandler } = require("./middleware/globle_error_middleware")
 
 
 
@@ -14,13 +15,7 @@ app.use(cookieParser());
 
 app.use(express.json());
 
-app.use('/', send_file_router,
-    //console.log(`homepage is called in app.js`)
-)
-
-// app.use('/signup', send_file_router, 
-//    // console.log(`signup page is been caled in app.js`)
-// );
+app.use('/', send_file_router,)
 
 app.use('/api/signup', auth_router);
 
@@ -37,7 +32,7 @@ app.use(express.static(
     path.join(__dirname, '..', 'Static')
 ))
 
-
+app.use(errorHandler)
 
 const port = process.env.PORT
 

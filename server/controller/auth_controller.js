@@ -9,23 +9,25 @@ const auth_functions = require('../auth')
 
 // 1) controller for checking the DB that there is email is already exist or not 
 
-const check_email_availability_controller = async (req, res) => {
+const check_email_availability_controller = async (req, res, next) => {
 
-    let email = req.body.user_email;
+    try {
 
-    let email_availability = await auth_functions.check_email_availability(email)
+        let email = req.body.user_email;
 
-    if (email_availability) {
+        let email_availability = await auth_functions.check_email_availability(email)
 
-        res.json({
-            exists: "available"
-        })
+        if (email_availability) {
 
-    } else {
+            res.json({
+                exists: "available"
+            })
 
-        res.json({
-            exists: "exist"
-        })
+        }
+
+    } catch (error) {
+
+        next(error)
 
     }
 
@@ -38,26 +40,27 @@ const check_email_availability_controller = async (req, res) => {
 
 // 2) controller for checking phone.no
 
-const check_phone_number_availability_controller = async (req, res) => {
+const check_phone_number_availability_controller = async (req, res, next) => {
 
-    let phone_number = req.body.phone_no;
+    try {
 
-    let phone_no_availibility = await auth_functions.check_phone_number_availability(phone_number);
+        let phone_number = req.body.phone_no;
 
-    if (phone_no_availibility) {
+        let phone_no_availibility = await auth_functions.check_phone_number_availability(phone_number);
 
-        res.json({
-            phone_no: 'available'
-        })
+        if (phone_no_availibility) {
 
-    } else {
+            res.json({
+                phone_no: 'available'
+            })
 
-        res.json({
-            phone_no: 'not_available'
-        })
+        }
+
+    } catch (error) {
+
+        next(error)
 
     }
-
 }
 
 
@@ -66,24 +69,24 @@ const check_phone_number_availability_controller = async (req, res) => {
 
 // 3) controller for checking user name 
 
-const check_username_availability_controller = async (req, res) => {
+const check_username_availability_controller = async (req, res, next) => {
 
-    let username = req.body.username;
+    try {
 
-    let username_availability = await auth_functions.check_username_availability(username);
+        let username = req.body.username;
 
-    if (username_availability) {
+        let username_availability = await auth_functions.check_username_availability(username);
 
-        res.json({
-            exists: "available"
-        })
+        if (username_availability) {
 
-    } else {
+            res.json({
+                exists: "available"
+            })
 
-        res.json({
-            exists: "exist"
-        })
+        }
 
+    } catch (error) {
+        next(error)
     }
 
 }
@@ -94,57 +97,55 @@ const check_username_availability_controller = async (req, res) => {
 
 // controller for making user signup
 
-const user_signup_fnc = async (req, res) => {
+const user_signup_fnc = async (req, res, next) => {
 
-    let user_email = req.body.user_email;
-    let user_phone_no = req.body.user_phone_no;
-    let user_username = req.body.user_username;
-    let user_pass_unhash = req.body.user_pass;
-    let device_info = req.user.os + ',' + ' ' + req.user.browser
+    try {
 
+        let user_email = req.body.user_email;
+        let user_phone_no = req.body.phone_no;
+        let user_username = req.body.user_username;
+        let user_pass_unhash = req.body.user_pass;
+        let device_info = req.user.os + ',' + ' ' + req.user.browser
 
-    let signup_status = await auth_functions.making_user_signup(
+        let signup_status = await auth_functions.making_user_signup(
 
-        user_email,
-        user_phone_no,
-        user_username,
-        user_pass_unhash,
-        device_info
-    )
+            user_email,
+            user_phone_no,
+            user_username,
+            user_pass_unhash,
+            device_info
+        )
 
-    //console.log(signup_status)
+        //console.log(signup_status)
 
-    if (signup_status.making_user_signup_status) {
+        if (signup_status.making_user_signup_status) {
 
-        let refresh_token = signup_status.refresh_token;
-        let access_token = signup_status.access_token;
+            let refresh_token = signup_status.refresh_token;
+            let access_token = signup_status.access_token;
 
-        res.cookie('refresh_token', refresh_token, {
-            httpOnly: true,
-            secure: false,
-            samesite: "strict",
-            maxAge: 1000 * 60 * 60 * 24 * 7
-        });
+            res.cookie('refresh_token', refresh_token, {
+                httpOnly: true,
+                secure: false,
+                samesite: "strict",
+                maxAge: 1000 * 60 * 60 * 24 * 7
+            });
 
-        res.cookie('access_token', access_token, {
-            httpOnly: true,
-            secure: false,
-            samesite: "strict",
-            maxAge: 1000 * 60 * 60
-        })
+            res.cookie('access_token', access_token, {
+                httpOnly: true,
+                secure: false,
+                samesite: "strict",
+                maxAge: 1000 * 60 * 60
+            })
 
-        res.json({
-            signup_status: "true"
-        })
+            res.json({
+                signup_status: "true"
+            })
 
+        }
 
-    } else {
-        res.json({
-            signup_status: "false"
-        })
+    } catch (error) {
+        next(error)
     }
-
-
 
 }
 
@@ -169,46 +170,49 @@ const user_signup_fnc = async (req, res) => {
 
 // controller for making user login
 
-const user_login_fnc = async (req, res) => {
+const user_login_fnc = async (req, res, next) => {
 
-    let user_email_or_username = req.body.user_email_or_username;
-    let password = req.body.password
-    let device_info = req.user.os + ',' + ' ' + req.user.browser
+    try {
 
-    let login_status = await auth_functions.making_user_login(user_email_or_username, password, device_info)
+        let user_email_or_username = req.body.user_email_or_username;
+        let password = req.body.password
+        let device_info = req.user.os + ',' + ' ' + req.user.browser
 
-
-    if (login_status.making_user_login_status) {
-
-        let refresh_token = login_status.refresh_token;
-        let access_token = login_status.access_token;
-
-        res.cookie('refresh_token', refresh_token, {
-            httpOnly: true,
-            secure: false,
-            samesite: "strict",
-            maxAge: 1000 * 60 * 60 * 24 * 7
-        });
-
-        res.cookie('access_token', access_token, {
-            httpOnly: true,
-            secure: false,
-            samesite: "strict",
-            maxAge: 1000 * 60 * 60
-        })
-
-        res.json({
-            login_status: "true"
-        })
+        let login_status = await auth_functions.making_user_login(user_email_or_username, password, device_info)
 
 
-    } else {
-        res.json({
-            login_status: "false"
-        })
+        if (login_status.making_user_login_status) {
+
+            let refresh_token = login_status.refresh_token;
+            let access_token = login_status.access_token;
+
+            res.cookie('refresh_token', refresh_token, {
+                httpOnly: true,
+                secure: false,
+                samesite: "strict",
+                maxAge: 1000 * 60 * 60 * 24 * 7
+            });
+
+            res.cookie('access_token', access_token, {
+                httpOnly: true,
+                secure: false,
+                samesite: "strict",
+                maxAge: 1000 * 60 * 60
+            })
+
+            res.json({
+                login_status: "true"
+            })
+
+
+        }
+
+    } catch (error) {
+        next(error)
     }
 
 }
+
 
 
 
@@ -284,7 +288,7 @@ const logout_user_cntl = async (req, res) => {
         res.clearCookie('refresh_token')
 
         res.clearCookie('access_token')
-        
+
         res.json({
             logout_status: "true"
         })

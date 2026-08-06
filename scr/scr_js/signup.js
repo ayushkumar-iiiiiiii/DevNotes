@@ -64,7 +64,7 @@ function validate_pass() {
 // sending email to backend for checking the email already exist or not
 
 async function send_email() {
-    console.log('sendemail working')
+    
     validate_email();
     try {
         const response = await data_api.post('/signup/check_email', {
@@ -98,7 +98,7 @@ async function send_phone_no() {
 
 // send username to backend for checking
 async function send_username() {
-    console.log('sending username to backend for check')
+    
     try {
         let response = await data_api.post('/signup/check_username', {
             username: user_username_input.value
@@ -125,7 +125,7 @@ async function sendcred() {
     try {
         const response = await data_api.post('/signup/signup', {
             user_email: valid_user_email,
-            user_phone_no: user_phone_no_input.value,
+            phone_no: user_phone_no_input.value,
             user_username: user_username_input.value,
             user_pass: valid_user_pass
         })
