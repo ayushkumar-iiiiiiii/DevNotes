@@ -1,8 +1,16 @@
 const pool = require("./dbconfig");
 
+const {
+    ValidationError,
+    UnauthorizedError,
+    ForbiddenError,
+    NotFoundError,
+    ConflictError
+} = require("./error")
 
 
-// running a query in data base for checking the email
+
+// running a query in data base for checking the emai
 
 async function check_email_indb(email) {
 
@@ -12,17 +20,17 @@ async function check_email_indb(email) {
         )
         if (result.rows.length > 0) {
 
+            throw new ConflictError('This email address is already associated with an account. Please use a different email address.')
+
             return false;
 
-            console.log('email already exist');
-
         } else {
+
             return true;
 
-            console.log(" email is available");
         }
     } catch (error) {
-        console.log(error)
+        throw error
     }
 
 }
@@ -41,14 +49,19 @@ async function check_phone_number_indb(phone_number) {
         )
         count = Number(result.rows[0].count);
         if (count < 3) {
+
             return true
+
         } else {
+
+            throw new ConflictError('This phone number is already associated with an account. Please use a different phone number.')
+
             return false
         }
 
     } catch (error) {
 
-        console.log(error)
+        throw error
 
     }
 }
@@ -66,17 +79,17 @@ async function check_username_indb(username) {
         )
         if (result.rows.length > 0) {
 
+            throw new ConflictError('This username is already taken. Please choose a different username.')
+
             return false
 
-            console.log('username already exist')
         } else {
 
             return true
 
-            console.log("username is available for use");
         }
     } catch (error) {
-        console.log(error)
+        throw error
     }
 
 }
@@ -106,21 +119,21 @@ async function inserting_cred_indb(
 
     } catch (error) {
 
-        if (error.code === '23505') {
+            if (error.code === "23505") {
+                switch (error.constraint) {
+                    case "users_email_key":
+                        throw new ConflictError("Email is already registered.");
 
-            console.log(error.constraint)
+                    case "users_username_key":
+                        throw new ConflictError("Username is already taken.");
 
-        } if (error) {
+                    default:
+                        throw new ConflictError("Duplicate value.");
+                }
+            }
 
-            console.log(error)
-
+            throw error;
         }
-
-        return {
-            inserting_cred_indb_status: false
-        };
-
-    }
 
 }
 
@@ -242,10 +255,14 @@ async function get_username_by_email(email) {
             [email]
         )
 
+        if(result.rowCount == 0) {
+            throw new UnauthorizedError('Invalid credentials.')
+        }
+
         return result.rows[0].username
 
     } catch (error) {
-        console.log(error)
+        throw error
     }
 
 }
@@ -262,10 +279,15 @@ async function get_email_by_username(username) {
             [username]
         )
 
+        if(result.rowCount == 0){
+            throw new UnauthorizedError('Invalid credentials.')
+        }
+
         return result.rows[0].email
 
     } catch (error) {
-        console.log(error)
+        
+        throw error
     }
 
 }
