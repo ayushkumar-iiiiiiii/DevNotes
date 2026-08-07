@@ -1,5 +1,6 @@
 import "./../scr_css/notes.css"
 import { data_api, page_api } from "./apis"
+import { notify } from "./notification"
 
 
 
@@ -73,9 +74,10 @@ all_notes_btn.addEventListener("click", async () => {
 
     all_notes.innerHTML = ""
 
-    await create_pinned_notes()
-
-    await create_all_notes(current_site_view)
+    await Promise.all([
+        create_pinned_notes(),
+        create_all_notes(current_site_view)
+    ])
 
 })
 
@@ -83,9 +85,10 @@ if (current_site_view = 'all') {
 
     all_notes_btn.style.backgroundColor = "#bbbbbb"
 
-    await create_pinned_notes()
-
-    await create_all_notes(current_site_view)
+    await Promise.all([
+        create_pinned_notes(),
+        create_all_notes(current_site_view)
+    ])
 }
 
 
@@ -464,7 +467,7 @@ async function handile_menu_position(rect) {
     } else {
         return rect.bottom
     }
-    
+
 }
 
 
@@ -1503,7 +1506,7 @@ remove_tag_note_menu_btn.addEventListener('click', (e) => {
 
         remove_tag_coloumn_btn.textContent = '✕'
 
-        remove_tag_coloumn_btn.addEventListener('click',  async (event) => {
+        remove_tag_coloumn_btn.addEventListener('click', async (event) => {
 
             const parent_container = event.target.parentElement
 
